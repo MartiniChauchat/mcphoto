@@ -76,8 +76,14 @@ const AuthButton = withRouter(({ history }) =>
     </div>
   ) : (
     <div className="Login_Signup">
-      <Button className="Login">Login</Button>
-      <Button className="Signup" variant="danger">
+      <Button className="Login" onClick={() => history.push('/login')}>
+        Login
+      </Button>
+      <Button
+        className="Signup"
+        variant="danger"
+        onClick={() => history.push('/signup')}
+      >
         Signup
       </Button>
     </div>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button';
 import { Auth } from '../App';
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter as Redirect } from 'react-router-dom';
 
 export default class Login extends Component {
   constructor(props) {
