@@ -131,7 +131,8 @@ export default class Gallery extends Component {
     currentArtworks: [],
     currentPage: 1,
     totalPages: null,
-    apiParams: new URLSearchParams()
+    apiParams: new URLSearchParams(),
+    keyword_search: ''
   };
 
   componentDidMount() {
@@ -180,7 +181,11 @@ export default class Gallery extends Component {
       params: this.state.apiParams
     }).then(response => {
       const currentArtworks = response.data.data.artworks;
-      this.setState({ currentPage, currentArtworks, totalPages });
+      this.setState({
+        currentPage,
+        currentArtworks,
+        totalPages
+      });
     });
   };
 
@@ -224,6 +229,28 @@ export default class Gallery extends Component {
     this.setState({ apiParams: newParams, currentPage: 1 });
   };
 
+  onChangeSearch = e => {
+    this.setState({
+      keyword_search: e.target.value
+    });
+    // If the search bar is deleted to empty, search all artworks automatically
+    if (e.target.value.trim() === '') {
+      let newParams = new URLSearchParams(this.state.apiParams);
+      newParams.delete('search');
+      this.setState({ apiParams: newParams, currentPage: 1 });
+    }
+  };
+
+  search = e => {
+    e.preventDefault();
+    let newParams = new URLSearchParams(this.state.apiParams);
+    newParams.delete('search');
+    if (this.state.keyword_search.trim() !== '') {
+      newParams.append('search', this.state.keyword_search);
+    }
+    this.setState({ apiParams: newParams, currentPage: 1 });
+  };
+
   render() {
     const { totalArtworks, currentArtworks } = this.state;
 
@@ -256,8 +283,9 @@ export default class Gallery extends Component {
               type="text"
               placeholder="Search keyword"
               className="mr-sm-2"
+              onChange={this.onChangeSearch}
             />
-            <Button variant="outline-info">
+            <Button variant="outline-info" onClick={e => this.search(e)}>
               <FaSearch className="searchIcon" />
             </Button>
           </Form>

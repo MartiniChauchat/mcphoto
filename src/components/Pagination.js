@@ -49,6 +49,7 @@ class Pagination extends Component {
     if (totalRecords !== prevProps.totalRecords) {
       this.setState({ totalRecords });
       this.totalPages = Math.ceil(totalRecords / this.pageLimit);
+      this.gotoPage(1);
     }
   }
 
