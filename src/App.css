@@ -7,11 +7,8 @@
   flex: 1;
 }
 
-.App-header {
-  background-color: #282c34;
-  display: flex;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.mr-auto {
+  text-align: center;
 }
 
 .Login_Signup {
