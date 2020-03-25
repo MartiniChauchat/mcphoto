@@ -2,7 +2,10 @@ import React from 'react';
 import logo from './logo2.png';
 import './App.css';
 import Button from 'react-bootstrap/Button';
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'semantic-ui-css/semantic.min.css';
 import {
   BrowserRouter as Router,
   Route,
@@ -13,6 +16,7 @@ import {
 import axios from 'axios';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import Gallery from './components/Gallery';
 
 export const Auth = {
   async authenticate(userinfo) {
@@ -94,21 +98,21 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <header className="App-header">
+        <Navbar bg="dark" variant="dark">
           <div className="App-logo-div">
-            <img src={logo} className="App-logo" alt="logo" />
+            <Navbar.Brand>McGallery</Navbar.Brand>
           </div>
-          <AuthButton />
-        </header>
-        <h1>Homepage</h1>
 
-        {/** This Protected page is for testing purpose. To test, when access without logging in, it will redirect to log in page, after logging in, it redirect back to this page */}
-        <li>
-          <Link to="/protected">Protected Page</Link>
-        </li>
+          <Nav className="mr-auto">
+            <Nav.Link href="/">Home</Nav.Link>
+            <Nav.Link href="/gallery">Gallery</Nav.Link>
+          </Nav>
+          <AuthButton />
+        </Navbar>
 
         <Route path="/signup" component={Signup} />
         <Route path="/login" component={Login} />
+        <Route path="/gallery" component={Gallery} />
         <PrivateRoute path="/protected" component={Protected} />
       </div>
     </Router>
