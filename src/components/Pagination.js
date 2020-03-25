@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 
+// Code referred from https://www.digitalocean.com/community/tutorials/how-to-build-custom-pagination-with-react
+
 const LEFT_PAGE = 'LEFT';
 const RIGHT_PAGE = 'RIGHT';
 
@@ -23,8 +25,7 @@ const range = (from, to, step = 1) => {
 class Pagination extends Component {
   constructor(props) {
     super(props);
-    const { totalRecords = null, pageLimit = 30, pageNeighbours = 0 } = props;
-
+    const { totalRecords = null, pageLimit = 20, pageNeighbours = 1 } = props;
     this.pageLimit = typeof pageLimit === 'number' ? pageLimit : 20;
     this.totalRecords = typeof totalRecords === 'number' ? totalRecords : 0;
 
@@ -36,11 +37,19 @@ class Pagination extends Component {
 
     this.totalPages = Math.ceil(this.totalRecords / this.pageLimit);
 
-    this.state = { currentPage: 1 };
+    this.state = { currentPage: 1, totalRecords: this.totalRecords };
   }
 
   componentDidMount() {
     this.gotoPage(1);
+  }
+
+  componentDidUpdate(prevProps) {
+    const { totalRecords } = this.props;
+    if (totalRecords !== prevProps.totalRecords) {
+      this.setState({ totalRecords });
+      this.totalPages = Math.ceil(totalRecords / this.pageLimit);
+    }
   }
 
   gotoPage = page => {
@@ -130,9 +139,9 @@ class Pagination extends Component {
   };
 
   render() {
-    if (!this.totalRecords || this.totalPages === 1) return null;
+    const { currentPage, totalRecords } = this.state;
+    if (!totalRecords || this.totalPages === 1) return null;
 
-    const { currentPage } = this.state;
     const pages = this.fetchPageNumbers();
 
     return (
