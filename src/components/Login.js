@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button';
 import { Auth } from '../App';
-import { BrowserRouter as Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Redirect } from 'react-router-dom'; // for some reason, has to Keep Router imported to make Redirect work
 
 export default class Login extends Component {
   constructor(props) {

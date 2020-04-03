@@ -29,7 +29,6 @@ export const Auth = {
       if (res.status === 200) {
         window.localStorage.setItem('token', res.data.token);
         window.localStorage.setItem('loggedIn', true);
-        console.log(window.localStorage.getItem('token'));
       } else {
         window.localStorage.removeItem('loggedIn');
       }
@@ -40,7 +39,6 @@ export const Auth = {
   },
   logout() {
     window.localStorage.removeItem('token');
-    console.log(window.localStorage.getItem('token'));
     window.localStorage.removeItem('loggedIn');
   }
 };
