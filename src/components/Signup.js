@@ -53,13 +53,16 @@ export default class Signup extends Component {
       if (res.data.status === 'success') {
         window.localStorage.setItem('token', res.data.token);
         window.localStorage.setItem('loggedIn', true);
+        window.localStorage.setItem('loggedInEmail', user.email);
         console.log(window.localStorage.getItem('token'));
         this.props.history.push('/');
       } else {
         window.localStorage.removeItem('loggedIn');
+        window.localStorage.removeItem('loggedInEmail');
       }
     } catch (err) {
       window.localStorage.removeItem('loggedIn');
+      window.localStorage.removeItem('loggedInEmail');
       alert(err.response.data.message);
     }
   }
