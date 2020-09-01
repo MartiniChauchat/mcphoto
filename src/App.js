@@ -30,13 +30,16 @@ export const Auth = {
       if (res.status === 200) {
         window.localStorage.setItem('token', res.data.token);
         window.localStorage.setItem('loggedIn', true);
+        window.localStorage.setItem('loggedInEmail', userinfo.email);
       } else {
         window.localStorage.removeItem('loggedIn');
+        window.localStorage.removeItem('loggedInEmail');
       }
     } catch (e) {
       console.log(e);
       alert(e.response.data.message);
       window.localStorage.removeItem('loggedIn');
+      window.localStorage.removeItem('loggedInEmail');
     }
   },
   logout() {
