@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import './profile/common-css/fluidbox.min.css';
 import './profile/css/styles.css';
+import axios from 'axios';
 
 
 export default class Home extends Component {
@@ -8,6 +9,16 @@ export default class Home extends Component {
         super(props);
         this.handleSubmit = this.handleSubmit.bind(this);
 
+    }
+
+    componentDidMount() {
+      axios({
+        method: 'get',
+        url: 'http://localhost:3001/api/v1/users/getAUser',
+        params: {email: window.localStorage.getItem("loggedInEmail")}
+      }).then(res => {
+        console.log(res.data.user);
+      }).catch((err) => console.log(err));
     }
 
     handleSubmit(e) {
