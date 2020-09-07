@@ -17,7 +17,9 @@ import axios from 'axios';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Gallery from './components/Gallery';
-import Profile from './components/Profile.js';
+import Profile from './components/Profile';
+import Editor from './components/Editor';
+
 
 export const Auth = {
   async authenticate(userinfo) {
@@ -109,6 +111,7 @@ function App() {
           <Nav className="mr-auto">
             <Nav.Link href="/">Home</Nav.Link>
             <Nav.Link href="/gallery">Gallery</Nav.Link>
+            <Nav.Link href="/editor">Editor</Nav.Link>
             <Nav.Link href="/profile">Profile</Nav.Link>
           </Nav>
           <AuthButton />
@@ -117,6 +120,7 @@ function App() {
         <Route path="/signup" component={Signup} />
         <Route path="/login" component={Login} />
         <Route path="/gallery" component={Gallery} />
+        <Route path="/editor" component={Editor} />
         <Route path="/profile" component={Profile} />
         <PrivateRoute path="/protected" component={Protected} />
       </div>
