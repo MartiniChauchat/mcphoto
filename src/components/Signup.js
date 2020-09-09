@@ -69,8 +69,8 @@ export default class Signup extends Component {
 
   render() {
     return (
-      <Layout>
-        <h3>New Account</h3>
+      <Layout className="m-5">
+        <h3 className="mb-3">New Account</h3>
         <form onSubmit={this.onSubmit}>
           <div className="form-group">
             <label>Name </label>

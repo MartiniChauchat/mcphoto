@@ -13,3 +13,8 @@
 .artwork {
   display: inline-block;
 }
+
+.btn[class*="btn-outline-"] {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}

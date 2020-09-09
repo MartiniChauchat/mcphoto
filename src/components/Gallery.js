@@ -9,7 +9,7 @@ import Pagination from './Pagination';
 import axios from 'axios';
 import '../css/Gallery.css';
 
-const PAGE_LIMIT = 1;
+const PAGE_LIMIT = 6;
 const PAGE_NEIGHBORS = 1;
 const priceRange0To50 = '0-50$';
 const priceRange50To100 = '50-100$';
@@ -255,30 +255,33 @@ export default class Gallery extends Component {
     const { totalArtworks, currentArtworks } = this.state;
 
     return (
-      <div>
+      <div className="m-5">
         <div className="gallery-searchbar">
-          <h4 className="filterBy-label">Filter by</h4>
+          <h4 className="filterBy-label mr-2">Filter by</h4>
           <Dropdown
             placeholder="Price"
             selection
             options={priceRanges}
             onChange={this.handlePriceChange}
+            className="mr-2"
           />
           <Dropdown
             placeholder="Medium"
             selection
             options={mediums}
             onChange={this.handleMediumChange}
+            className="mr-3"
           />
-          <h4 className="sortBy-label"> Sort by</h4>
+          <h4 className="sortBy-label mr-2">Sort by</h4>
           <Dropdown
             placeholder="Sort"
             selection
             options={sortOptions}
             onChange={this.handleSortChange}
+            className="mr-5"
           />
 
-          <Form inline className="searchForm">
+          <Form inline className="searchForm ml-4">
             <FormControl
               type="text"
               placeholder="Search keyword"
@@ -300,7 +303,7 @@ export default class Gallery extends Component {
         </div>
         <div>
           {currentArtworks.map((artwork, index) => (
-            <Card style={{ width: '25vw' }} key={index} className="artwork">
+            <Card style={{ width: '25vw' }} key={index} className="artwork m-4">
               <Card.Img variant="top" src="https://picsum.photos/200/200" />
               <Card.Body>
                 <Card.Title>{artwork.title}</Card.Title>

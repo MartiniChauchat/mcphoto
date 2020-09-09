@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo2.png';
 import './App.css';
 import Button from 'react-bootstrap/Button';
 import Navbar from 'react-bootstrap/Navbar';
@@ -14,12 +13,13 @@ import {
   withRouter
 } from 'react-router-dom';
 import axios from 'axios';
+import { MDBCol, MDBContainer, MDBRow, MDBFooter } from "mdbreact";
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Gallery from './components/Gallery';
 import Profile from './components/Profile';
 import Editor from './components/Editor';
-
+import Home from './components/Home';
 
 export const Auth = {
   async authenticate(userinfo) {
@@ -47,6 +47,7 @@ export const Auth = {
   logout() {
     window.localStorage.removeItem('token');
     window.localStorage.removeItem('loggedIn');
+    window.localStorage.removeItem('loggedInEmail');
   }
 };
 
@@ -76,7 +77,7 @@ const AuthButton = withRouter(({ history }) =>
       <Button
         onClick={() => {
           Auth.logout();
-          history.push('/');
+          history.push('/home');
         }}
         className="Logout"
       >
@@ -99,6 +100,22 @@ const AuthButton = withRouter(({ history }) =>
   )
 );
 
+const NavLinks = withRouter(() =>
+  window.localStorage.getItem('loggedIn') ? (
+    <Nav className="mr-auto">
+      <Nav.Link href="/">Home</Nav.Link>
+      <Nav.Link href="/gallery">Gallery</Nav.Link>
+      <Nav.Link href="/editor">Edit Profile</Nav.Link>
+      <Nav.Link href="/profile">My Profile</Nav.Link>
+    </Nav>
+  ) : (
+    <Nav className="mr-auto">
+      <Nav.Link href="/">Home</Nav.Link>
+      <Nav.Link href="/gallery">Gallery</Nav.Link>
+    </Nav>
+  )
+);
+
 function App() {
   return (
     <Router>
@@ -108,22 +125,58 @@ function App() {
             <Navbar.Brand>McGallery</Navbar.Brand>
           </div>
 
-          <Nav className="mr-auto">
-            <Nav.Link href="/">Home</Nav.Link>
-            <Nav.Link href="/gallery">Gallery</Nav.Link>
-            <Nav.Link href="/editor">Editor</Nav.Link>
-            <Nav.Link href="/profile">Profile</Nav.Link>
-          </Nav>
+          <NavLinks />
           <AuthButton />
         </Navbar>
 
+        <Route path="/" exact={true} component={Home} />
         <Route path="/signup" component={Signup} />
         <Route path="/login" component={Login} />
         <Route path="/gallery" component={Gallery} />
-        <Route path="/editor" component={Editor} />
+        <PrivateRoute path="/editor" component={Editor} />
         <Route path="/profile" component={Profile} />
         <PrivateRoute path="/protected" component={Protected} />
       </div>
+
+      {/* Footer */}
+      <MDBFooter color="stylish-color-dark" className="font-small pt-4 mt-4">
+        <MDBContainer fluid className="text-center text-md-left">
+          <MDBRow>
+            <MDBCol md="4">
+              <h4 className="text-uppercase mb-4 mt-3 font-weight-bold">Abstract</h4>
+              <p id="footer-abstract">
+                This is an online platform for McGill members to upload, view, and potentially borrow, and purchase artworks, promoting student artists.
+              </p>
+            </MDBCol>
+            <MDBCol md="4">
+              <h4 className="text-uppercase mb-4 mt-3 font-weight-bold">Links</h4>
+              <a href="https://github.com/ZikunLyu/McPhoto" className="mr-4">Backend Repo</a>
+              <a href="https://github.com/MartiniChauchat/mcphoto">Frontend Repo</a>
+            </MDBCol>
+            <MDBCol md="4">
+              <h4 className="text-uppercase mb-4 mt-3 font-weight-bold">Contact</h4>
+              <div>
+                <a href="mailto:katya.i.marc@mcgill.ca">Supervisor: Katya Marc</a>
+              </div>
+              <div>
+                <a href="mailto:zikun.lyu@mail.mcgill.ca">Team member: Zikun Lyu</a>
+              </div>
+              <div>
+                <a href="mailto:wenhao.geng@mail.mcgill.ca">Team member: Wenhao Geng</a>
+              </div>
+              <div>
+                <a href="mailto:yudi.xie@mail.mcgill.ca">Team member: Yudi Xie</a>
+              </div>
+            </MDBCol>
+          </MDBRow>
+        </MDBContainer>
+        <div className="footer-copyright text-center py-3 mt-4">
+          <MDBContainer fluid>
+            &copy; {new Date().getFullYear()} Copyright:{' '} 
+            Made with ❤️ by Wenhao Geng, Yudi Xie, Zikun Lyu
+          </MDBContainer>
+        </div>
+      </MDBFooter>
     </Router>
   );
 }
