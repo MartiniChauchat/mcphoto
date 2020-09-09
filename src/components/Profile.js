@@ -19,7 +19,7 @@ componentDidMount() {
     axios({
         method: 'get',
         url: 'http://localhost:3001/api/v1/users/getAUser',
-        params: { email: window.localStorage.getItem("loggedInEmail") }
+        params: { email: new URLSearchParams(this.props.location.search).get("email") }
     }).then(res => {
         // console.log(res.data.user); 
         console.log(res.data.user);    

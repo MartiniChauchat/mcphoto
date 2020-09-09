@@ -307,7 +307,7 @@ export default class Gallery extends Component {
               <Card.Img variant="top" src="https://picsum.photos/200/200" />
               <Card.Body>
                 <Card.Title>{artwork.title}</Card.Title>
-                <Card.Text>{artwork.artist}</Card.Text>
+                <Card.Text><a href={`/profile?email=${artwork.artistEmail}`}>{artwork.artist}</a></Card.Text>
                 <Button variant="primary">{artwork.price}</Button>
               </Card.Body>
             </Card>

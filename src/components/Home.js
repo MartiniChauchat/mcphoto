@@ -9,9 +9,9 @@ export default function Home() {
   const history = useHistory();
   return (
     <div>
-      <MDBContainer fluid className="text-center">
+      <MDBContainer fluid className="text-center m-5">
         <MDBRow>
-          <MDBCol md="7 mt-4">
+          <MDBCol md="6 mt-4 mb-4">
             <img src={mcgill} alt="McGill Campus" />
           </MDBCol>
           <MDBCol md="5">
@@ -35,6 +35,7 @@ export default function Home() {
               Explore the Gallery
             </MDBBtn>
           </MDBCol>
+          <MDBCol md="1"></MDBCol>
         </MDBRow>
       </MDBContainer>
     </div>

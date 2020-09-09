@@ -77,7 +77,7 @@ const AuthButton = withRouter(({ history }) =>
       <Button
         onClick={() => {
           Auth.logout();
-          history.push('/home');
+          history.push('/');
         }}
         className="Logout"
       >
@@ -106,7 +106,7 @@ const NavLinks = withRouter(() =>
       <Nav.Link href="/">Home</Nav.Link>
       <Nav.Link href="/gallery">Gallery</Nav.Link>
       <Nav.Link href="/editor">Edit Profile</Nav.Link>
-      <Nav.Link href="/profile">My Profile</Nav.Link>
+      <Nav.Link href={`/profile?email=${window.localStorage.getItem('loggedInEmail')}`}>My Profile</Nav.Link>
     </Nav>
   ) : (
     <Nav className="mr-auto">
