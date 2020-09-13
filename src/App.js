@@ -120,7 +120,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Navbar bg="dark" variant="dark">
+        <Navbar bg="dark" variant="dark" sticky="top">
           <div className="App-logo-div">
             <Navbar.Brand>McGallery</Navbar.Brand>
           </div>
