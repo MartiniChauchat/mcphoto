@@ -8,6 +8,11 @@ import { Dropdown } from 'semantic-ui-react';
 import Pagination from './Pagination';
 import axios from 'axios';
 import '../css/Gallery.css';
+import { Spin } from 'antd';
+import 'antd/dist/antd.css';
+import { Tag } from 'antd';
+import { FolderOpenOutlined, ShoppingCartOutlined, DownloadOutlined
+          } from '@ant-design/icons';
 
 const PAGE_LIMIT = 6;
 const PAGE_NEIGHBORS = 1;
@@ -189,6 +194,20 @@ export default class Gallery extends Component {
     });
   };
 
+  addColorTag = e => {
+    if(e === 'Photograph') return "magenta";
+    else if(e === 'Painting') return "red";
+    else if(e === 'Sculpture') return "volcano";
+    else if(e === 'Glass Art') return "orange";
+    else if(e === 'Drawing & illustration') return "gold";
+    else if(e === 'Mixed Media & Collage') return "lime";
+  }
+
+  strategyTag = e =>{
+    if(e === true) return 'success'
+    else if(e === false) return 'error';
+  }
+
   handlePriceChange = (e, { value }) => {
     let newParams = new URLSearchParams(this.state.apiParams);
     newParams.delete('price[gte]');
@@ -304,11 +323,24 @@ export default class Gallery extends Component {
         <div>
           {currentArtworks.map((artwork, index) => (
             <Card style={{ width: '25vw' }} key={index} className="artwork m-4">
-              <Card.Img variant="top" src="https://picsum.photos/200/200" />
+              <Card.Img variant="top"
+                        src={`http://localhost:3001/api/v1/arts/getFilepathByTitleArtist?artist=${artwork.artist}&title=${artwork.title}&imageSize=-small`}
+                        alt='Not Found' />
               <Card.Body>
-                <Card.Title>{artwork.title}</Card.Title>
-                <Card.Text><a href={`/profile?email=${artwork.artistEmail}`}>{artwork.artist}</a></Card.Text>
-                <Button variant="primary">{artwork.price}</Button>
+                <Card.Title>{artwork.title}  <Tag color={this.addColorTag(artwork.medium)}>{artwork.medium}</Tag></Card.Title>
+                <Card.Text>
+                  <a href={`/profile?email=${artwork.artistEmail}`}>By {artwork.artist}</a>
+                  <div>
+                  <Tag icon={<DownloadOutlined />} color={this.strategyTag(artwork.isForDownload)}>  Download
+                  </Tag>
+                  <Tag icon={<ShoppingCartOutlined />} color={this.strategyTag(artwork.isForSale)}>  Sale
+                  </Tag>
+                  <Tag icon={<FolderOpenOutlined />} color={this.strategyTag(artwork.isForRental)}>
+                      Rental
+                  </Tag>
+                  </div>
+                </Card.Text>
+                <Button variant="primary">$ {artwork.price}</Button>
               </Card.Body>
             </Card>
           ))}
