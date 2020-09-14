@@ -102,7 +102,7 @@ const AuthButton = withRouter(({ history }) =>
 
 const NavLinks = withRouter(() =>
   window.localStorage.getItem('loggedIn') ? (
-    <Nav className="mr-auto">
+    <Nav className="mr-auto ">
       <Nav.Link href="/">Home</Nav.Link>
       <Nav.Link href="/gallery">Gallery</Nav.Link>
       <Nav.Link href="/editor">Edit Profile</Nav.Link>
@@ -125,7 +125,7 @@ function App() {
             <Navbar.Brand>McGallery</Navbar.Brand>
           </div>
 
-          <NavLinks />
+          <NavLinks className="sticky-top"/>
           <AuthButton />
         </Navbar>
 
