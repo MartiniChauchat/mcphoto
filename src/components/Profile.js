@@ -11,22 +11,35 @@ export default class Profile extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
 
         this.state = {
-            user: []
+            user: [],
+            exper: [],
+            a: ['1', '2', '3']
         }
 
     }
 
     componentDidMount() {
+
         axios({
             method: 'get',
             url: 'http://localhost:3001/api/v1/users/getAUser',
             params: { email: new URLSearchParams(this.props.location.search).get("email") }
-        }).then(res => {
-            // console.log(res.data.user); 
+        }).then(res => { 
             console.log(res.data.user);
             const user = res.data.user;
-            this.setState({ user });
+            this.setState({ user: user });
         }).catch((err) => console.log(err));
+
+        axios({
+            method: 'get',
+            url: 'http://localhost:3001/api/v1/expers/getAllExperience',
+            params: { email: new URLSearchParams(this.props.location.search).get("email") }
+        }).then(res => {
+            console.log(res.data.exper);
+            const exper = res.data.exper;
+            this.setState({ exper: exper });
+        }).catch((err) => console.log(err));
+
     }
 
     handleSubmit(e) {
@@ -48,7 +61,6 @@ export default class Profile extends Component {
                             <div class="row">
                                 <div class="col-sm-6 col-md-6 col-lg-4">
                                     <div class="info">
-                                        {/* <i class="icon ion-ios-location-outline"></i> */}
                                         <div class="right-area">
                                             <h5>{this.state.user.street}</h5>
                                             <h5>{this.state.user.region}</h5>
@@ -93,7 +105,7 @@ export default class Profile extends Component {
                                     <h2><b>{this.state.user.name}</b></h2>
                                     <h4 class="font-yellow">McGill Student</h4>
                                     <ul class="information margin-tb-30">
-                                        <li><b>BORN : </b>August 25, 1987</li>
+                                        <li><b>BORN : </b>August 25, 1997</li>
                                         <li><b>EMAIL : </b>{this.state.user.email}</li>
                                         <li><b>Age : </b>{this.state.user.age}</li>
                                     </ul>
@@ -116,7 +128,6 @@ export default class Profile extends Component {
                             <div class="col-sm-4">
                                 <div class="heading">
                                     <h3><b>About me</b></h3>
-                                    {/* <h6 class="font-lite-black"><b>PROFESSIONAL PATH</b></h6> */}
                                 </div>
                             </div>
                             <div class="col-sm-8">
@@ -137,21 +148,13 @@ export default class Profile extends Component {
                                 </div>
                             </div>
                             <div class="col-sm-8">
-
+                            {/* {this.state.exper.map((exp) => */}
                                 <div class="experience margin-b-50">
-                                    <h4><b>JUNIOR PROJECT MANAGER</b></h4>
-                                    <h5 class="font-yellow"><b>DESIGN STUDIO</b></h5>
-                                    <h6 class="margin-t-10">MARCH 2015 - PRESENT</h6>
-                                    <p class="font-semi-white margin-tb-30">Duis non volutpat arcu, eu mollis tellus. Sed finibus aliquam neque sit amet sodales.
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla maximus pellentes que velit,
-                                    quis consequat nulla effi citur at. Maecenas sed massa tristique.Duis non volutpat arcu,
-							eu mollis tellus. Sed finibus aliquam neque sit amet sodales. </p>
-                                    <ul class="list margin-b-30">
-                                        <li>Duis non volutpat arcu, eu mollis tellus.</li>
-                                        <li>Quis consequat nulla effi citur at.</li>
-                                        <li>Sed finibus aliquam neque sit.</li>
-                                    </ul>
+                                    <h4><b>{this.state.exper.title}</b></h4>
+                                    {/* <h6 class="margin-t-10">{exp.date}</h6> */}
+                                    {/* <p class="font-semi-white margin-tb-30">{exp.description}</p> */}
                                 </div>
+                            {/* )} */}
 
                             </div>
                         </div>
