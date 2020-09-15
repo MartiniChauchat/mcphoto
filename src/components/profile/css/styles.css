@@ -109,7 +109,7 @@ b.max-bold{ font-weight: 700; }
 
 header{ position: absolute; top: 90px; left: 0; right: 0; z-index: 100; }
 /* TODO this is the background of header tag*/
-header .heading-wrapper{ border-radius: 5px; padding: 30px 40px 20px; background: #ED1B2F; color: #fff; }
+header .heading-wrapper{ border-radius: 5px; padding: 30px 40px 20px; background-image: url(../images/bg9.jpg); color: #fff; }
 
 header .info{ margin-bottom: 10px; }
 
@@ -130,7 +130,7 @@ header .downlad-btn:hover{ -webkit-transform: translateY(-4px); transform: trans
 
 .intro-section{ padding-top: 200px; position: relative; background-size: cover; 
 	z-index: 1;
-	background-image: url(../images/bg1.png);}
+	background-image: url(../images/bg5.jpg);}
 
 .intro-section:before{ content:''; z-index: -1; position: absolute; top: 0; bottom: 0; left: 0; 
 	right: 0; background: rgba(0,0,0, .2); }
@@ -199,7 +199,11 @@ header .downlad-btn:hover{ -webkit-transform: translateY(-4px); transform: trans
 7. EXPERIENCE SECTION
 --------------------------------- */
 
-.experience-section{ background: #ED1B2F; color: #fff; opacity: 0.96;}
+.experience-section{ 
+	/*TODO background: #ED1B2F; */
+	background-image: url(../images/bg6.jpg);
+	color: #fff; 
+	opacity: 0.96;}
 
 .experience .list > li{ display: block; position: relative; margin-bottom: 10px; padding-left: 20px; }
 
@@ -228,7 +232,7 @@ header .downlad-btn:hover{ -webkit-transform: translateY(-4px); transform: trans
 --------------------------------- */
 
 .counter-section{ position: relative; padding: 100px 0 70px; background-size: cover; z-index: 1; 
-	background-image: url(../images/bg1.png); color: #fff; }
+	background-image: url(../images/bg1.jpg); color: #fff; }
 
 .counter-section:after{ content:''; z-index: -1; position: absolute; top: 0; bottom: 0; left: 0; 
 	right: 0; background: rgba(0,0,0, .2); }

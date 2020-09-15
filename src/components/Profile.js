@@ -143,14 +143,14 @@ export default class Profile extends Component {
                         <div class="row">
                             <div class="col-sm-4">
                                 <div class="heading">
-                                    <h3><b>Experience</b></h3>
+                                    <h3 style={{ color: 'white' }}><b>Experience</b></h3>
                                     <h6 class="font-lite-black"><b>My Journey</b></h6>
                                 </div>
                             </div>
                             <div class="col-sm-8">
                             {/* {this.state.exper.map((exp) => */}
                                 <div class="experience margin-b-50">
-                                    <h4><b>{this.state.exper.title}</b></h4>
+                                    <h4 style={{ color: 'white' }}><b>{this.state.exper.title}</b></h4>
                                     {/* <h6 class="margin-t-10">{exp.date}</h6> */}
                                     {/* <p class="font-semi-white margin-tb-30">{exp.description}</p> */}
                                 </div>
