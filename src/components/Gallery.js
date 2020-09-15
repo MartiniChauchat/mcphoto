@@ -325,7 +325,8 @@ export default class Gallery extends Component {
             <Card style={{ width: '25vw' }} key={index} className="artwork m-4">
               <Card.Img variant="top"
                         src={`http://localhost:3001/api/v1/arts/getFilepathByTitleArtist?artist=${artwork.artist}&title=${artwork.title}&imageSize=-small`}
-                        alt='Not Found' />
+                        alt='Not Found'
+                        style={{ height: '250px' }} />
               <Card.Body>
                 <Card.Title>{artwork.title}  <Tag color={this.addColorTag(artwork.medium)}>{artwork.medium}</Tag></Card.Title>
                 <Card.Text>
