@@ -18,3 +18,7 @@
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
 }
+
+.pagination .page-item.active .page-link {
+  background-color: #4285f4 !important;
+}
