@@ -151,11 +151,10 @@ export default class Profile extends Component {
                             {/* {this.state.exper.map((exp) => */}
                                 <div class="experience margin-b-50">
                                     <h4 style={{ color: 'white' }}><b>{this.state.exper.title}</b></h4>
-                                    {/* <h6 class="margin-t-10">{exp.date}</h6> */}
-                                    {/* <p class="font-semi-white margin-tb-30">{exp.description}</p> */}
+                                    <h6 class="margin-t-10" style={{ color: 'white' }}>{this.state.exper.date}</h6> 
+                                    <p class="font-semi-white margin-tb-30" style={{ color: 'white' }}>{this.state.exper.description}</p>
                                 </div>
-                            {/* )} */}
-
+                                 {/* )} */}
                             </div>
                         </div>
                     </div>
