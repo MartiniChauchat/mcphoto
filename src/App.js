@@ -156,7 +156,10 @@ function App() {
             <MDBCol md="4">
               <h4 className="text-uppercase mb-4 mt-3 font-weight-bold">Contact</h4>
               <div>
-                <a href="mailto:katya.i.marc@mcgill.ca">Supervisor: Katya Marc</a>
+                <a href="mailto:katya.i.marc@mcgill.ca">Co-Supervisor: Katya Marc</a>
+              </div>
+              <div>
+                <a href="mailto:ioannis.psaromiligkos@mcgill.ca">Co-Supervisor: Ioannis Psaromiligkos</a>
               </div>
               <div>
                 <a href="mailto:zikun.lyu@mail.mcgill.ca">Team member: Zikun Lyu</a>
