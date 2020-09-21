@@ -105,9 +105,9 @@ export default class Profile extends Component {
                                     <h2><b>{this.state.user.name}</b></h2>
                                     <h4 class="font-yellow">McGill Student</h4>
                                     <ul class="information margin-tb-30">
-                                        <li><b>BORN : </b>August 25, 1997</li>
-                                        <li><b>EMAIL : </b>{this.state.user.email}</li>
-                                        <li><b>Age : </b>{this.state.user.age}</li>
+                                        {/* <li><b>BORN : </b>August 25, 1997</li> */}
+                                        {/* <li><b>EMAIL : </b>{this.state.user.email}</li> */}
+                                        {/* <li><b>Age : </b>{this.state.user.age}</li> */}
                                     </ul>
                                     <ul class="social-icons">
                                         <li><a href="#"><i class="ion-social-pinterest"></i></a></li>
@@ -148,13 +148,13 @@ export default class Profile extends Component {
                                 </div>
                             </div>
                             <div class="col-sm-8">
-                            {/* {this.state.exper.map((exp) => */}
+                            {this.state.exper.map((exp) =>
                                 <div class="experience margin-b-50">
-                                    <h4 style={{ color: 'white' }}><b>{this.state.exper.title}</b></h4>
-                                    <h6 class="margin-t-10" style={{ color: 'white' }}>{this.state.exper.date}</h6> 
-                                    <p class="font-semi-white margin-tb-30" style={{ color: 'white' }}>{this.state.exper.description}</p>
+                                    <h4 style={{ color: 'white' }}><b>{exp.title}</b></h4>
+                                    {/* <h6 class="margin-t-10" style={{ color: 'white' }}>{exp.date}</h6>  */}
+                                    <p class="font-semi-white margin-tb-30" style={{ color: 'white' }}>{exp.description}</p>
                                 </div>
-                                 {/* )} */}
+                                  )}
                             </div>
                         </div>
                     </div>
@@ -166,11 +166,11 @@ export default class Profile extends Component {
                         <div class="row">
                             <div class="col-sm-4">
                                 <div class="heading">
-                                    <h3><b>Education</b></h3>
-                                    <h6 class="font-lite-black"><b>ACADEMIC CAREER</b></h6>
+                                    <h3><b>Artwork</b></h3>
+                                    <h6 class="font-lite-black"><b>My Vision</b></h6>
                                 </div>
                             </div>
-                            <div class="col-sm-8">
+                            {/* <div class="col-sm-8">
                                 <div class="education-wrapper">
                                     <div class="education margin-b-50">
                                         <h4><b>MASTER DEGREE IN SCIENCE</b></h4>
@@ -202,7 +202,7 @@ export default class Profile extends Component {
 							eu mollis tellus. Sed finibus aliquam neque sit amet sodales. </p>
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
 
