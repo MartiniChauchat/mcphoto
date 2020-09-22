@@ -120,7 +120,7 @@ const sortOptions = [
   },
   {
     key: 'creationTime',
-    text: 'Creation Time',
+    text: 'Upload Date',
     value: 'creationTime'
   },
   {
