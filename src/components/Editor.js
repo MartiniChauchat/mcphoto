@@ -24,7 +24,6 @@ export default class Editor extends Component {
     }
 
     handleClick = e => {
-        console.log('click ', e);
         this.setState({ current: e.key });
     };
 
@@ -34,7 +33,6 @@ export default class Editor extends Component {
             url: 'http://localhost:3001/api/v1/users/getAUser',
             params: { email: window.localStorage.getItem("loggedInEmail") }
         }).then(res => {
-            console.log(res.data.user);
             const user = res.data.user;
             this.setState({ user });
         }).catch((err) => console.log(err));
@@ -44,8 +42,6 @@ export default class Editor extends Component {
     handleSubmit(e) {
         e.preventDefault();
     }
-
-
 
     render() {
         const { SubMenu } = Menu;
@@ -59,7 +55,7 @@ export default class Editor extends Component {
               <Sider className="avatar-sider">
                   <div className="avatar-space">
                   <Avatar shape="square" size={100} icon={<UserOutlined />} />
-                      <div style={{marginTop: '5%'}}>java</div>
+                      <div style={{marginTop: '5%'}}>{this.state.user.name}</div>
                   </div>
               </Sider>
               <Content className="container">

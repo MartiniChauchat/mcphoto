@@ -4,21 +4,18 @@ import {
   Form,
   Input,
   Tooltip,
-  Cascader,
   Select,
-  Row,
-  Col,
-  Checkbox,
-  DatePicker,
-  Space,
   Button,
   AutoComplete,
-  Divider
+  Divider,
+  Popconfirm,
+  message
 } from 'antd'
 import { QuestionCircleOutlined, InfoCircleOutlined, EditOutlined, CheckOutlined } from '@ant-design/icons';
+import axios from 'axios';
 const { Option } = Select;
 const AutoCompleteOption = AutoComplete.Option;
-const dateFormat = 'YYYY/MM/DD';
+const dateFormat = 'YYYY.MM';
 
 const formItemLayout = {
   labelCol: {
@@ -52,12 +49,29 @@ const tailFormItemLayout = {
 };
 
 export default class ProfileChanger extends Component {
+
+  componentDidMount() {
+    axios({
+      method: 'get',
+      url: 'http://localhost:3001/api/v1/users/getAUser',
+      params: { email: window.localStorage.getItem("loggedInEmail") }
+    }).then(res => {
+      const user = res.data.user;
+      this.setState({ user: user });
+      this.formRef.current.setFieldsValue({
+        email: this.state.user.email,
+        nickname: this.state.user.name,
+        major: this.state.user.major
+      })
+    }).catch((err) => console.log(err));
+  }
+
   state = {
-    editDisabled: true
+    editDisabled: true,
+    user: []
   };
 
   formRef = React.createRef();
-
   onFinish = (values) => {
     console.log('Received values of form: ', values);
   };
@@ -67,7 +81,18 @@ export default class ProfileChanger extends Component {
     else this.setState({editDisabled: true})
   }
 
+  confirm = (e) => {
+    console.log(e);
+    message.success('Information updated!');
+  }
+
+  cancel = (e) => {
+    console.log(e);
+    message.error('Canceled!');
+  }
+
   render() {
+
     return (
       <Form
         {...formItemLayout}
@@ -75,10 +100,8 @@ export default class ProfileChanger extends Component {
         name="register"
         onFinish={this.onFinish}
         initialValues={{
-          email:'java@mail.mcgill.ca',
-          nickname:'java',
-          major:'Software Engineering',
-          address:'1111 rue University'
+          city:'Montreal',
+          bio:'Photography lover !'
         }}
       >
         <Divider>Your Account</Divider>
@@ -123,6 +146,7 @@ export default class ProfileChanger extends Component {
 
         <Divider>Let others know you</Divider>
 
+        {/*
         <Form.Item
           name="birthday"
           label="birthday"
@@ -136,10 +160,11 @@ export default class ProfileChanger extends Component {
             <DatePicker disabled={this.state.editDisabled} bordered={false} defaultValue={moment('2000/01/01', dateFormat)} format={dateFormat} />
           </Space>
         </Form.Item>
+        */}
 
         <Form.Item
-          name="age"
-          label="age"
+          name="bio"
+          label="bio"
           rules={[
             {
               required: false
@@ -195,14 +220,14 @@ export default class ProfileChanger extends Component {
               <Option value="Northwest Territories">Northwest Territories</Option>
               <Option value="Yukon">Yukon</Option>
             </Select>
-            <Input disabled={this.state.editDisabled} defaultValue="McGill Campus"  />
-            <Input disabled={this.state.editDisabled} defaultValue="H3C123" />
+            {/* <Input disabled={this.state.editDisabled} defaultValue="McGill Campus"  /> */}
+            {/* <Input disabled={this.state.editDisabled} defaultValue="H3C123" /> */}
           </Input.Group>
         </Form.Item>
 
         <Form.Item
-          name="address"
-          label="address"
+          name="city"
+          label="city"
           rules={[
             {
               required: false,
@@ -214,9 +239,17 @@ export default class ProfileChanger extends Component {
         </Form.Item>
 
         <Form.Item {...tailFormItemLayout}>
+          <Popconfirm
+            title="Are you sure to update your information?"
+            onConfirm={this.confirm}
+            onCancel={this.cancel}
+            okText="Yes"
+            cancelText="No"
+          >
           <Button htmlType="submit" type="primary" style={{marginRight:'5%', width:'20%'}} icon={<CheckOutlined />} shape="round" size={'large'}>
             Update&nbsp;
           </Button>
+          </Popconfirm>
           <Button onClick={this.enableEdit} shape="round" style={{marginLeft:'5%', width:'20%'}} icon={<EditOutlined />} size={'large'}>
             Edit
           </Button>
