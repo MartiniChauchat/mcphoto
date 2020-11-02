@@ -20,6 +20,7 @@ import Gallery from './components/Gallery';
 import Profile from './components/Profile';
 import Editor from './components/Editor';
 import Home from './components/Home';
+import Transaction from './components/Transaction';
 
 export const Auth = {
   async authenticate(userinfo) {
@@ -107,6 +108,7 @@ const NavLinks = withRouter(() =>
       <Nav.Link href="/gallery">Gallery</Nav.Link>
       <Nav.Link href="/editor">Edit Profile</Nav.Link>
       <Nav.Link href={`/profile?email=${window.localStorage.getItem('loggedInEmail')}`}>My Profile</Nav.Link>
+      <Nav.Link href="/transaction">Transaction</Nav.Link>
     </Nav>
   ) : (
     <Nav className="mr-auto">
@@ -135,6 +137,7 @@ function App() {
         <Route path="/gallery" component={Gallery} />
         <PrivateRoute path="/editor" component={Editor} />
         <Route path="/profile" component={Profile} />
+        <PrivateRoute path="/transaction" component={Transaction} />
         <PrivateRoute path="/protected" component={Protected} />
       </div>
 
