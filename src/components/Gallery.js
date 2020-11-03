@@ -1,18 +1,23 @@
 import React, { Component } from 'react';
+import Rodal from 'rodal';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import Image from 'react-bootstrap/Image'
 import { FaSearch } from 'react-icons/fa';
 import { Dropdown } from 'semantic-ui-react';
 import Pagination from './Pagination';
 import axios from 'axios';
 import '../css/Gallery.css';
-import { Spin } from 'antd';
 import 'antd/dist/antd.css';
-import { Tag } from 'antd';
-import { FolderOpenOutlined, ShoppingCartOutlined, DownloadOutlined
-          } from '@ant-design/icons';
+import 'rodal/lib/rodal.css';
+import { Tag, Descriptions, Modal } from 'antd';
+import {
+  FolderOpenOutlined,
+  ShoppingCartOutlined,
+  DownloadOutlined
+} from '@ant-design/icons';
 
 const PAGE_LIMIT = 6;
 const PAGE_NEIGHBORS = 1;
@@ -131,13 +136,21 @@ const sortOptions = [
 ];
 
 export default class Gallery extends Component {
+  constructor(props) {
+    super(props);
+    this.sendTransaction = this.sendTransaction.bind(this);
+  }
+
   state = {
     totalArtworks: 0,
     currentArtworks: [],
     currentPage: 1,
     totalPages: null,
     apiParams: new URLSearchParams(),
-    keyword_search: ''
+    keyword_search: '',
+    // Modal related
+    overlay_visible: false,
+    artwork: new Object()
   };
 
   componentDidMount() {
@@ -195,18 +208,13 @@ export default class Gallery extends Component {
   };
 
   addColorTag = e => {
-    if(e === 'Photograph') return "magenta";
-    else if(e === 'Painting') return "red";
-    else if(e === 'Sculpture') return "volcano";
-    else if(e === 'Glass Art') return "orange";
-    else if(e === 'Drawing & illustration') return "gold";
-    else if(e === 'Mixed Media & Collage') return "lime";
-  }
-
-  strategyTag = e =>{
-    if(e === true) return 'success'
-    else if(e === false) return 'error';
-  }
+    if (e === 'Photograph') return 'magenta';
+    else if (e === 'Painting') return 'red';
+    else if (e === 'Sculpture') return 'volcano';
+    else if (e === 'Glass Art') return 'orange';
+    else if (e === 'Drawing & illustration') return 'gold';
+    else if (e === 'Mixed Media & Collage') return 'lime';
+  };
 
   handlePriceChange = (e, { value }) => {
     let newParams = new URLSearchParams(this.state.apiParams);
@@ -270,8 +278,43 @@ export default class Gallery extends Component {
     this.setState({ apiParams: newParams, currentPage: 1 });
   };
 
+  showOverlay = artwork => {
+    this.setState({
+      overlay_visible: true,
+      artwork
+    });
+  };
+
+  hideOverlay = () => {
+    this.setState({ overlay_visible: false });
+  };
+
+  async sendTransaction(artwork) {
+    let body = {
+      sender_email: window.localStorage.getItem('loggedInEmail'),
+      receiver_email: artwork.artistEmail,
+      type: artwork.isForDownload ? "Download" : (artwork.isForRental ? "Rental" : "Sale"),
+      artwork: artwork._id,
+    };
+    await axios({
+      method: 'post',
+      url: 'http://localhost:3001/api/v1/transactions/transaction',
+      data: body,
+      headers: { 
+        'Content-Type': 'application/json',
+        'authorization': 'Bearer ' + window.localStorage.getItem('token'),
+      }
+    });
+    this.hideOverlay();
+  };
+
   render() {
-    const { totalArtworks, currentArtworks } = this.state;
+    const {
+      totalArtworks,
+      currentArtworks,
+      overlay_visible,
+      artwork
+    } = this.state;
 
     return (
       <div className="m-5">
@@ -312,6 +355,64 @@ export default class Gallery extends Component {
             </Button>
           </Form>
         </div>
+        <div>
+          <Modal
+            visible={overlay_visible}
+            title={artwork.title}
+            onOk={() => {}}
+            onCancel={this.hideOverlay}
+            footer={[
+              <Button
+                variant="success"
+                onClick={() => this.sendTransaction(artwork)}
+                key={artwork._id}
+              >
+                Request {artwork.isForDownload ? "Download" : (artwork.isForRental ? "Rental" : "Sale")}
+              </Button>,
+            ]}
+            width={'65vw'}
+          >
+            <Image src="holder.js/100px250" 
+              fluid
+              src={`http://localhost:3001/api/v1/arts/getFilepathByTitleArtist?artist=${artwork.artist}&title=${artwork.title}&imageSize=-large`}
+              alt="Not Found"
+            />
+            
+            <Descriptions bordered style={{ marginTop: '20px' }}>
+              <Descriptions.Item label="Availability" span={2}>
+                {artwork.isForDownload ? "Download" : (artwork.isForRental ? "Rental" : "Sale")}
+              </Descriptions.Item>
+              <Descriptions.Item label="Price">
+                $ {artwork.price}
+              </Descriptions.Item>
+              <Descriptions.Item label="Artist">
+                <a href={`/profile?email=${artwork.artistEmail}`}>
+                  {artwork.artist}
+                </a>
+              </Descriptions.Item>
+              <Descriptions.Item label="Artist Email">
+                {artwork.artistEmail}
+              </Descriptions.Item>
+              <Descriptions.Item label="Upload Date">
+                {artwork.creationTime === undefined ? '' : artwork.creationTime.substring(0, 10)}
+              </Descriptions.Item>
+              <Descriptions.Item label="Medium">
+                <Tag color={this.addColorTag(artwork.medium)}>
+                  {artwork.medium}
+                </Tag>
+              </Descriptions.Item>
+              <Descriptions.Item label="Width">
+                {artwork.width}
+              </Descriptions.Item>
+              <Descriptions.Item label="Height">
+                {artwork.height}
+              </Descriptions.Item>
+              <Descriptions.Item label="Description" span={3}>
+                {artwork.description}
+              </Descriptions.Item>
+            </Descriptions>
+          </Modal>
+        </div>
         <div className="d-flex flex-row py-4 align-items-center">
           <Pagination
             totalRecords={totalArtworks}
@@ -323,25 +424,62 @@ export default class Gallery extends Component {
         <div>
           {currentArtworks.map((artwork, index) => (
             <Card style={{ width: '25vw' }} key={index} className="artwork m-4">
-              <Card.Img variant="top"
-                        src={`http://localhost:3001/api/v1/arts/getFilepathByTitleArtist?artist=${artwork.artist}&title=${artwork.title}&imageSize=-small`}
-                        alt='Not Found'
-                        style={{ height: '250px' }} />
+              <Card.Img
+                variant="top"
+                src={`http://localhost:3001/api/v1/arts/getFilepathByTitleArtist?artist=${artwork.artist}&title=${artwork.title}&imageSize=-small`}
+                alt="Not Found"
+                style={{ height: '250px' }}
+              />
               <Card.Body>
-                <Card.Title>{artwork.title}  <Tag color={this.addColorTag(artwork.medium)}>{artwork.medium}</Tag></Card.Title>
+                <Card.Title>
+                  {artwork.title}{' '}
+                  <Tag color={this.addColorTag(artwork.medium)}>
+                    {artwork.medium}
+                  </Tag>
+                </Card.Title>
                 <Card.Text>
-                  <a href={`/profile?email=${artwork.artistEmail}`}>By {artwork.artist}</a>
+                  <a href={`/profile?email=${artwork.artistEmail}`}>
+                    By {artwork.artist}
+                  </a>
                   <div>
-                  <Tag icon={<DownloadOutlined />} color={this.strategyTag(artwork.isForDownload)}>  Download
-                  </Tag>
-                  <Tag icon={<ShoppingCartOutlined />} color={this.strategyTag(artwork.isForSale)}>  Sale
-                  </Tag>
-                  <Tag icon={<FolderOpenOutlined />} color={this.strategyTag(artwork.isForRental)}>
+                    {artwork.isForDownload ? (
+                    <Tag
+                      icon={<DownloadOutlined />}
+                      color={'success'}
+                    >
+                      {' '}
+                      Download
+                    </Tag>) : null }
+                    {artwork.isForSale ? (
+                    <Tag
+                      icon={<ShoppingCartOutlined />}
+                      color={'success'}
+                    >
+                      {' '}
+                      Sale
+                    </Tag>) : null }
+                    {artwork.isForRental ? (
+                    <Tag
+                      icon={<FolderOpenOutlined />}
+                      color={'success'}
+                    >
                       Rental
-                  </Tag>
+                    </Tag>) : null }
                   </div>
                 </Card.Text>
-                <Button variant="primary">$ {artwork.price}</Button>
+                <Button
+                  variant="primary"
+                  onClick={() => this.showOverlay(artwork)}
+                >
+                  $ {artwork.price}
+                </Button>
+                {artwork.accessList.includes(window.localStorage.getItem('loggedInEmail')) && artwork.isForDownload ? (
+                <Button
+                  variant="danger"
+                  href={`http://localhost:3001/api/v1/arts/getFilepathByTitleArtist?artist=${artwork.artist}&title=${artwork.title}&imageSize=`}
+                >
+                  Download
+                </Button>) : null}
               </Card.Body>
             </Card>
           ))}
