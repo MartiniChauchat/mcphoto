@@ -19,7 +19,6 @@ export default class Profile extends Component {
     }
 
     componentDidMount() {
-
         axios({
             method: 'get',
             url: 'http://localhost:3001/api/v1/users/getAUser',
