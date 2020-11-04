@@ -10,7 +10,6 @@ import Pagination from './Pagination';
 import axios from 'axios';
 import '../css/Gallery.css';
 import 'antd/dist/antd.css';
-import 'rodal/lib/rodal.css';
 import { Tag, Descriptions, Modal } from 'antd';
 import {
   FolderOpenOutlined,
