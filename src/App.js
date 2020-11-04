@@ -108,7 +108,7 @@ const NavLinks = withRouter(() =>
       <Nav.Link href="/gallery">Gallery</Nav.Link>
       <Nav.Link href="/editor">Edit Profile</Nav.Link>
       <Nav.Link href={`/profile?email=${window.localStorage.getItem('loggedInEmail')}`}>My Profile</Nav.Link>
-      <Nav.Link href="/transaction">Transaction</Nav.Link>
+      <Nav.Link href={`/transaction?email=${window.localStorage.getItem('loggedInEmail')}`}>Transaction</Nav.Link>
     </Nav>
   ) : (
     <Nav className="mr-auto">
