@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import PrivatePhotosViewCard from './PrivatePhotosViewCard';
 import moment from 'moment';
 import '../css/Editor.css';
-import { Collapse, Image, Spin, Row, Col, Divider, Typography, Button, Layout, Modal, Form, Input, Select } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Upload, DatePicker, InputNumber,Collapse, Image, Spin, Row, Col, Divider, Typography, Button, Layout, Modal, Form, Input, Select, Radio, notification} from 'antd';
+import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 const { Panel } = Collapse;
 const { Title } = Typography;
@@ -40,10 +40,23 @@ const text = (
 export default class PrivatePhotosViewer extends Component {
     state = {
       artworks:[],
-      modalVisible: false
+      modalVisible: false,
+      confirmLoading: false,
+      user:[],
+      uploadVisible: false,
+      uploadedFile:[]
     };
 
   componentDidMount() {
+    axios({
+      method: 'get',
+      url: 'http://localhost:3001/api/v1/users/getAUser',
+      params: { email: window.localStorage.getItem("loggedInEmail") }
+    }).then(res => {
+      const user = res.data.user;
+      this.setState({ user });
+    }).catch((err) => console.log(err));
+
     axios({
       method: 'get',
       url: 'http://localhost:3001/api/v1/arts/getArtworkListByArtistEmail',
@@ -52,6 +65,8 @@ export default class PrivatePhotosViewer extends Component {
       this.setState( {artworks:res.data} )
     }).catch((err) => console.log(err));
   }
+
+  formRef = React.createRef();
 
   search = e => {
     console.log(this.state.artworks[e]);
@@ -69,6 +84,98 @@ export default class PrivatePhotosViewer extends Component {
     })
   }
 
+  normFile = (e) => {
+    console.log('Upload event:', e);
+
+    if (Array.isArray(e)) {
+      console.log('Done!');
+      return e;
+    }
+    return e && e.fileList;
+  };
+
+  handleUploadCancel = (e) => {
+    this.setState({
+      uploadVisible:false
+    })
+  }
+
+  handleUploadData(){
+    let uploadInfo={
+      title: this.state.uploadedFile.title,
+      artist: this.state.uploadedFile.artist
+    }
+    return uploadInfo;
+  }
+
+  handler = (info) => {
+    const status = info.file.status;
+    if(status === 'done'){
+      axios({
+        method: 'get',
+        url: 'http://localhost:3001/api/v1/arts/compressByfilepath',
+        params: { imagePathReq: info.file.response.path
+        }
+      }).then(res => {
+        console.log(res);
+        notification.success({
+          message: 'Successfully uploaded the file',
+          placement: 'bottomRight'
+        });
+
+        this.setState({
+          uploadVisible:false
+        })
+      }).catch((err) => console.log(err));
+    }
+  }
+
+  handleOk = (e) => {
+    this.setState({
+      confirmLoading: true,
+    });
+
+    let upload = {
+      title: this.formRef.current.getFieldValue('title'),
+      price: this.formRef.current.getFieldValue('price'),
+      description: this.formRef.current.getFieldValue('description'),
+      artist: this.state.user.name,
+      artistEmail: window.localStorage.getItem("loggedInEmail"),
+      creationTime: this.formRef.current.getFieldValue('creationtime')._d,
+      medium: this.formRef.current.getFieldValue('medium'),
+      width: this.formRef.current.getFieldValue('width'),
+      height: this.formRef.current.getFieldValue('height'),
+      isForDownload: eval(this.formRef.current.getFieldValue('forDownload')),
+      isForSale: eval(this.formRef.current.getFieldValue('forSale')),
+      isForRental: eval(this.formRef.current.getFieldValue('forRental')),
+      isSoldorRented: false,
+    };
+
+    this.formRef.current.submit(
+    axios({
+      method: 'post',
+      url: 'http://localhost:3001/api/v1/arts/uploadArtInfo',
+      data: upload
+    }).then(res => {
+      console.log("Thank you for upload");
+      this.setState({
+        confirmLoading: false
+      });
+      notification.success({
+        message: 'Successfully added your work',
+        description:
+          'You can upload the file right now.',
+        placement: 'bottomRight'
+      });
+      this.setState({
+        modalVisible: false,
+        uploadVisible: true,
+        uploadedFile: upload
+      });
+    }).catch((err) => console.log(err))
+    );
+  }
+
   render() {
     const { artworks } = this.state;
     return (
@@ -77,7 +184,7 @@ export default class PrivatePhotosViewer extends Component {
           <Button onClick={this.showModal} ghost={true} type="primary" className={'addfile-button'} shape="round" icon={<PlusOutlined />} size={'large'}>
             Add your art !
           </Button>
-          <Modal title={'Add a new artwork'} visible={this.state.modalVisible} onCancel={this.cancelModal} >
+          <Modal onOk={this.handleOk} width={1200} title={'Add a new artwork'} visible={this.state.modalVisible} onCancel={this.cancelModal} confirmLoading={this.state.confirmLoading}>
             <Form
               {...formItemLayout}
               ref={this.formRef}
@@ -101,15 +208,14 @@ export default class PrivatePhotosViewer extends Component {
               <Form.Item
                 name="medium"
                 label="Medium"
+                hasFeedback
                 rules={[
                   {
                     required: true,
-                    whitespace: true,
                   },
                 ]}
               >
-                <Input.Group compact>
-                  <Select defaultValue="Photograph">
+                  <Select placeholder="Please select medium of your work">
                     <Option value="Photograph">Photograph</Option>
                     <Option value="Painting">Painting</Option>
                     <Option value="Sculpture">Sculpture</Option>
@@ -121,11 +227,119 @@ export default class PrivatePhotosViewer extends Component {
                     <Option value="Other">Other</Option>
                     <Option value="None">None</Option>
                   </Select>
-                </Input.Group>
               </Form.Item>
 
+              <Form.Item
+                name="price"
+                label="Price"
+                rules={[
+                  {
+                    pattern: /^[0-9]+$/,
+                    required: true,
+                  },
+                ]}><InputNumber />
+              </Form.Item>
+
+              <Form.Item name="creationtime"
+                         label="CreationTime"
+                         rules={[
+                           {
+                             required: true,
+                             message: 'Please select time!',
+                           },
+                         ]}>
+                <DatePicker picker="month" />
+              </Form.Item>
+
+              <Form.Item name="description" label="Description">
+                <Input.TextArea />
+              </Form.Item>
+              <Divider>More details about your art work</Divider>
+
+              <Form.Item
+                name="width"
+                label="Width"
+                rules={[
+                  {
+                    pattern: /^[0-9]+$/,
+                    required: true,
+                  },
+                ]}>
+                <InputNumber />
+              </Form.Item>
+
+              <Form.Item
+                name="height"
+                label="Height"
+                rules={[
+                  {
+                    pattern: /^[0-9]+$/,
+                    required: true,
+                  },
+                ]}>
+                <InputNumber />
+              </Form.Item>
+
+              <Form.Item name="forDownload" label="Provide download?" rules={[
+                {
+                  required: true,
+                },
+              ]}>
+                <Radio.Group>
+                  <Radio value='true'>Yes</Radio>
+                  <Radio value='false'>No</Radio>
+                </Radio.Group>
+              </Form.Item>
+
+              <Form.Item name="forSale" label="For sale?" rules={[
+                {
+                  required: true,
+                },
+              ]}>
+                <Radio.Group>
+                  <Radio value='true'>Yes</Radio>
+                  <Radio value='false'>No</Radio>
+                </Radio.Group>
+              </Form.Item>
+
+              <Form.Item name="forRental" label="For rental?" rules={[
+                {
+                  required: true,
+                },
+              ]}>
+                <Radio.Group>
+                  <Radio value='true'>Yes</Radio>
+                  <Radio value='false'>No</Radio>
+                </Radio.Group>
+              </Form.Item>
             </Form>
           </Modal>
+
+          <Modal title={'Upload file for your work!'} width={850} visible={this.state.uploadVisible} onCancel={this.handleUploadCancel}>
+            <Form
+              {...formItemLayout}
+              ref={this.formRef}
+              name="fileuploader"
+            >
+            <Form.Item
+              name="fileupload"
+              label="FileUpload"
+              valuePropName="fileList"
+              getValueFromEvent={this.normFile}
+              extra="Please note that you can upload the file later"
+            >
+              <Upload name={'file'}
+                      accept={'image/jpeg'}
+                      action={'http://localhost:3001/api/v1/arts/uploadFileByTitleArtist'}
+                      data={() => this.handleUploadData()}
+                      onChange={this.handler}
+                      listType="picture">
+                <Button icon={<UploadOutlined />}>Upload .jpeg only</Button>
+              </Upload>
+            </Form.Item>
+            </Form>
+          </Modal>
+
         <Collapse accordion bordered={false} className={'image-panel'}>
         {artworks.map((artwork, index) => (
           <Panel header={`${artwork.title}:   
