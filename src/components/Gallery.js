@@ -118,11 +118,11 @@ const mediums = [
 ];
 
 const sortOptions = [
-  {
+  /*{
     key: 'price',
     text: 'Price',
     value: 'price'
-  },
+  },*/
   {
     key: 'creationTime',
     text: 'Upload Date',
@@ -150,7 +150,10 @@ export default class Gallery extends Component {
     keyword_search: '',
     // Modal related
     overlay_visible: false,
-    artwork: new Object()
+    artwork: new Object(),
+    isForDownload: false,
+    isForRental: false,
+    isForSale: false,
   };
 
   componentDidMount() {
@@ -281,7 +284,10 @@ export default class Gallery extends Component {
   showOverlay = artwork => {
     this.setState({
       overlay_visible: true,
-      artwork
+      artwork,
+      isForDownload: artwork.isForDownload,
+      isForRental: artwork.isForRental,
+      isForSale: artwork.isForSale
     });
   };
 
@@ -289,11 +295,11 @@ export default class Gallery extends Component {
     this.setState({ overlay_visible: false });
   };
 
-  async sendTransaction(artwork) {
+  async sendTransaction(artwork, transType) {
     let body = {
       sender_email: window.localStorage.getItem('loggedInEmail'),
       receiver_email: artwork.artistEmail,
-      type: artwork.isForDownload ? "Download" : (artwork.isForRental ? "Rental" : "Sale"),
+      type: transType,
       artwork: artwork._id,
     };
     await axios({
@@ -320,13 +326,13 @@ export default class Gallery extends Component {
       <div className="m-5">
         <div className="gallery-searchbar">
           <h4 className="filterBy-label mr-2">Filter by</h4>
-          <Dropdown
+          {/* <Dropdown
             placeholder="Price"
             selection
             options={priceRanges}
             onChange={this.handlePriceChange}
             className="mr-2"
-          />
+          /> */}
           <Dropdown
             placeholder="Medium"
             selection
@@ -364,10 +370,27 @@ export default class Gallery extends Component {
             footer={[
               <Button
                 variant="success"
-                onClick={() => this.sendTransaction(artwork)}
-                key={artwork._id}
+                onClick={() => this.sendTransaction(artwork, 'Download')}
+                key='downloadBtn'
+                disabled={!this.state.isForDownload}
               >
-                Request {artwork.isForDownload ? "Download" : (artwork.isForRental ? "Rental" : "Sale")}
+                Request Download
+              </Button>,
+              <Button
+                variant="success"
+                onClick={() => this.sendTransaction(artwork, 'Rental')}
+                key='rentalBtn'
+                disabled={!this.state.isForRental}
+              >
+                Request Rental
+              </Button>,
+              <Button
+                variant="success"
+                onClick={() => this.sendTransaction(artwork, 'Sale')}
+                key='saleBtn'
+                disabled={!this.state.isForSale}
+              >
+                Request Sale
               </Button>,
             ]}
             width={'65vw'}
@@ -379,11 +402,17 @@ export default class Gallery extends Component {
             />
             
             <Descriptions bordered style={{ marginTop: '20px' }}>
-              <Descriptions.Item label="Availability" span={2}>
-                {artwork.isForDownload ? "Download" : (artwork.isForRental ? "Rental" : "Sale")}
+              <Descriptions.Item label="Availability" span={3}>
+                {`${artwork.isForDownload ? '  Download' : ''}${artwork.isForRental ? '  Rental' : ''}${artwork.isForSale ? '  Sale' : ''}`}
               </Descriptions.Item>
-              <Descriptions.Item label="Price">
-                $ {artwork.price}
+              <Descriptions.Item label="Download Price">
+                {artwork.isForDownload ? `$${artwork.download_price}` : 'N/A'}
+              </Descriptions.Item>
+              <Descriptions.Item label="Rental Price">
+                {artwork.isForRental ? `$${artwork.rental_price}` : 'N/A'}
+              </Descriptions.Item>
+              <Descriptions.Item label="Sale Price">
+                {artwork.isForSale ? `$${artwork.sale_price}` : 'N/A'}
               </Descriptions.Item>
               <Descriptions.Item label="Artist">
                 <a href={`/profile?email=${artwork.artistEmail}`}>
@@ -471,7 +500,7 @@ export default class Gallery extends Component {
                   variant="primary"
                   onClick={() => this.showOverlay(artwork)}
                 >
-                  $ {artwork.price}
+                  Details
                 </Button>
                 {artwork.accessList.includes(window.localStorage.getItem('loggedInEmail')) && artwork.isForDownload ? (
                 <Button

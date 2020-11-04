@@ -15,7 +15,6 @@ export default class Profile extends Component {
             exper: [],
             a: ['1', '2', '3']
         }
-
     }
 
     componentDidMount() {
