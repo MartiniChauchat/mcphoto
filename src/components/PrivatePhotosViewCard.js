@@ -54,7 +54,9 @@ export default class PrivatePhotosViewCard extends Component {
         <Row justify="space-around"><Title level={4}>{this.state.currentArtwork.medium} created on {moment(this.state.currentArtwork.creationTime).format('YYYY.MM.DD')}</Title></Row>
         <Row justify="space-around"><Title level={5}>{this.state.currentArtwork.height}cm x {this.state.currentArtwork.width}cm</Title></Row>
         <Row justify="space-around"><Paragraph ellipsis={{ rows: 5, expandable: true, symbol: 'more' }}>{this.state.currentArtwork.description}</Paragraph></Row>
-        <Row justify="space-around"><Title level={4}>$ {this.state.currentArtwork.price}</Title></Row>
+        <Row justify="space-around"><Title level={4}>Download for $ {this.state.currentArtwork.download_price}</Title></Row>
+        <Row justify="space-around"><Title level={4}>Sale for $ {this.state.currentArtwork.sale_price}</Title></Row>
+        <Row justify="space-around"><Title level={4}>Rental for $ {this.state.currentArtwork.rental_price}</Title></Row>
         <Row justify="space-around">
           <Upload name={'file'}
                   accept={'image/jpeg'}

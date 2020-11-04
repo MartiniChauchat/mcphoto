@@ -137,7 +137,9 @@ export default class PrivatePhotosViewer extends Component {
 
     let upload = {
       title: this.formRef.current.getFieldValue('title'),
-      price: this.formRef.current.getFieldValue('price'),
+      downloadPrice: this.formRef.current.getFieldValue('downloadprice'),
+      rentalPrice: this.formRef.current.getFieldValue('rentalprice'),
+      salePrice: this.formRef.current.getFieldValue('saleprice'),
       description: this.formRef.current.getFieldValue('description'),
       artist: this.state.user.name,
       artistEmail: window.localStorage.getItem("loggedInEmail"),
@@ -230,12 +232,29 @@ export default class PrivatePhotosViewer extends Component {
               </Form.Item>
 
               <Form.Item
-                name="price"
-                label="Price"
+                name="downloadprice"
+                label="Download price"
                 rules={[
                   {
-                    pattern: /^[0-9]+$/,
-                    required: true,
+                    pattern: /^[0-9]+$/
+                  },
+                ]}><InputNumber />
+              </Form.Item>
+              <Form.Item
+                name="saleprice"
+                label="Sale price"
+                rules={[
+                  {
+                    pattern: /^[0-9]+$/
+                  },
+                ]}><InputNumber />
+              </Form.Item>
+              <Form.Item
+                name="rentalprice"
+                label="Rental price"
+                rules={[
+                  {
+                    pattern: /^[0-9]+$/
                   },
                 ]}><InputNumber />
               </Form.Item>
