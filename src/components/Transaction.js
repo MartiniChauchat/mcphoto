@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button'
-//import './transaction/transaction.css';
+import '../css/transaction.css';
 import axios from 'axios';
-import './transaction.css';
 
 export default class Transaction extends Component {
   constructor(props) {
@@ -13,25 +12,13 @@ export default class Transaction extends Component {
     // this.isPending = this.isPending.bind(this);
 
     this.state = {
-      user: [],
       trans_receive: [],
       trans_send: [],
-      art: [],
       isPending: true,
     };
   }
 
   componentDidMount() {
-    axios({
-      method: 'get',
-      url: 'http://localhost:3001/api/v1/users/getAUser',
-      params: { email: new URLSearchParams(this.props.location.search).get("email") }
-    }).then(res => {
-      console.log(res.data.user);
-      const user = res.data.user;
-      this.setState({ user: user });
-    }).catch((err) => console.log(err));
-
 
     axios({
       method: 'get',
@@ -41,21 +28,7 @@ export default class Transaction extends Component {
       console.log(res.data.trans);
       const trans_send = res.data.trans;
       this.setState({ trans_send: trans_send });
-
     }).catch((err) => console.log(err));
-
-    this.state.trans_send.forEach((trans) => {
-      axios({
-        method: 'get',
-        url: 'http://localhost:3001/api/v1/artwork',
-        params: { _id: trans._id }
-      }).then(res => {
-        console.log(res.data.a);
-        const art_item = res.data.a;
-        this.setState({ art: this.state.art.concat(art_item) });
-      }).catch((err) => console.log(err))
-
-    });
 
     axios({
       method: 'get',
@@ -127,9 +100,10 @@ export default class Transaction extends Component {
                             {/* <td><a href="#">{trans._id}</a></td> */}
                             <td>{trans.receiver_email}</td>
                             <td>{trans.type}</td>
-                            <td>{trans.artwork}</td>
+                            <td>{trans.artworkTitle}</td>
                             {/* {this.isPending({trans.status})}; */}
                             {/* <td><span class="badge badge-success">{trans.status}</span></td> */}
+                            <td>
                             {(() => {
                                 switch (trans.status) {
                                   case "pending": return <Button variant="primary" size="sm">Cancel</Button>;
@@ -138,6 +112,7 @@ export default class Transaction extends Component {
                                   default: return <Button variant="primary" size="sm">Cancel</Button>;
                                 }
                               })()}
+                            </td>
                           </tr>
                         )}
                       </tbody>
@@ -176,7 +151,7 @@ export default class Transaction extends Component {
                             {/* <td><a href="#">{trans._id}</a></td> */}
                             <td>{trans.sender_email}</td>
                             <td>{trans.type}</td>
-                            <td>{trans.artwork}</td>
+                            <td>{trans.artworkTitle}</td>
                             {/* <td><span class="badge badge-success">{trans.status}</span></td> */}
                             <td>
                               {(() => {

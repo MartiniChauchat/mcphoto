@@ -16,44 +16,41 @@ import {
   ShoppingCartOutlined,
   DownloadOutlined
 } from '@ant-design/icons';
+import by_nc_nd from '../images/ccLicenses/by-nc-nd.png';
+import by_nc_sa from '../images/ccLicenses/by-nc-sa.png';
+import by_nc from '../images/ccLicenses/by-nc.png';
+import by_nd from '../images/ccLicenses/by-nd.png';
+import by_sa from '../images/ccLicenses/by-sa.png';
+import by from '../images/ccLicenses/by.png';
+import cc_zero from '../images/ccLicenses/cc-zero.png';
 
 const PAGE_LIMIT = 6;
 const PAGE_NEIGHBORS = 1;
-const priceRange0To50 = '0-50$';
-const priceRange50To100 = '50-100$';
-const priceRange100To150 = '100-150$';
-const priceRange150To200 = '150-200$';
-const priceRangeOver200 = 'over 200$';
 const NONE = 'None';
 const PHOTOGRAPH = 'Photograph';
 const PAINTING = 'Painting';
 const SCULPTURE = 'Sculpture';
 
-const priceRanges = [
+const categories = [
   {
-    key: priceRange0To50,
-    text: priceRange0To50,
-    value: priceRange0To50
+    key: "isForDownload",
+    text: "For Download",
+    value: "isForDownload"
   },
   {
-    key: priceRange50To100,
-    text: priceRange50To100,
-    value: priceRange50To100
+    key: "isForRental",
+    text: "For Rental",
+    value: "isForRental"
   },
   {
-    key: priceRange100To150,
-    text: priceRange100To150,
-    value: priceRange100To150
+    key: "isForSale",
+    text: "For Purchase",
+    value: "isForSale"
   },
   {
-    key: priceRange150To200,
-    text: priceRange150To200,
-    value: priceRange150To200
-  },
-  {
-    key: priceRangeOver200,
-    text: priceRangeOver200,
-    value: priceRangeOver200
+    key: "PhotoRepo",
+    text: "Photo Repo",
+    value: "PhotoRepo",
   },
   {
     key: NONE,
@@ -116,11 +113,11 @@ const mediums = [
 ];
 
 const sortOptions = [
-  /*{
+  {
     key: 'price',
     text: 'Price',
     value: 'price'
-  },*/
+  },
   {
     key: 'creationTime',
     text: 'Upload Date',
@@ -152,6 +149,7 @@ export default class Gallery extends Component {
     isForDownload: false,
     isForRental: false,
     isForSale: false,
+    categorySelected: '',
   };
 
   componentDidMount() {
@@ -217,24 +215,14 @@ export default class Gallery extends Component {
     else if (e === 'Mixed Media & Collage') return 'lime';
   };
 
-  handlePriceChange = (e, { value }) => {
+  handleCategoryChange = (e, { value }) => {
     let newParams = new URLSearchParams(this.state.apiParams);
-    newParams.delete('price[gte]');
-    newParams.delete('price[lt]');
-    if (value === priceRange0To50) {
-      newParams.append('price[gte]', 0);
-      newParams.append('price[lt]', 50);
-    } else if (value === priceRange50To100) {
-      newParams.append('price[gte]', 50);
-      newParams.append('price[lt]', 100);
-    } else if (value === priceRange100To150) {
-      newParams.append('price[gte]', 100);
-      newParams.append('price[lt]', 150);
-    } else if (value === priceRange150To200) {
-      newParams.append('price[gte]', 150);
-      newParams.append('price[lt]', 200);
-    } else if (value === priceRangeOver200) {
-      newParams.append('price[gte]', 200);
+    newParams.delete('category');
+    if (value !== NONE) { 
+      newParams.append('category', value);
+      this.setState({ categorySelected: value });
+    } else {
+      this.setState({ categorySelected: '' });
     }
     this.setState({ apiParams: newParams, currentPage: 1 });
   };
@@ -299,6 +287,7 @@ export default class Gallery extends Component {
       receiver_email: artwork.artistEmail,
       type: transType,
       artwork: artwork._id,
+      artworkTitle: artwork.title,
     };
     await axios({
       method: 'post',
@@ -312,6 +301,49 @@ export default class Gallery extends Component {
     this.hideOverlay();
   };
 
+  getPrice = artwork => {
+    const { categorySelected } = this.state;
+    if (categorySelected === '') {
+      return 'Details';
+    } else if (categorySelected === 'isForDownload') {
+      return `$${artwork.download_price}`;
+    } else if (categorySelected === 'isForRental') {
+      return `$${artwork.rental_price}`;
+    } else if (categorySelected === 'isForSale') {
+      return `$${artwork.sale_price}`;
+    } else {
+      return '$0'
+    }
+  }
+
+  getCcLicenseImg = license => {
+    let src = null;
+    if (license === 'N/A') {
+      return (<div 
+        style={{ height: '35px', width: '80px' }}
+      />);
+    } else if (license === 'CC-BY-NC-ND') {
+      src = by_nc_nd;
+    } else if (license === 'CC-BY-NC-SA') {
+      src = by_nc_sa;
+    } else if (license === 'CC-BY-NC') {
+      src = by_nc;
+    } else if (license === 'CC-BY-ND') {
+      src = by_nd;
+    } else if (license === 'CC-BY-SA') {
+      src = by_sa;
+    } else if (license === 'CC-BY') {
+      src = by;
+    } else {
+      src = cc_zero;
+    }
+    return (<Image 
+      src={src}
+      alt={license}
+      style={{ height: '30px', width: '80px', marginTop: '5px' }}
+    />);
+  }
+
   render() {
     const {
       totalArtworks,
@@ -324,13 +356,13 @@ export default class Gallery extends Component {
       <div className="m-5">
         <div className="gallery-searchbar">
           <h4 className="filterBy-label mr-2">Filter by</h4>
-          {/* <Dropdown
-            placeholder="Price"
+          <Dropdown
+            placeholder="Category"
             selection
-            options={priceRanges}
-            onChange={this.handlePriceChange}
+            options={categories}
+            onChange={this.handleCategoryChange}
             className="mr-2"
-          /> */}
+          />
           <Dropdown
             placeholder="Medium"
             selection
@@ -338,14 +370,16 @@ export default class Gallery extends Component {
             onChange={this.handleMediumChange}
             className="mr-3"
           />
-          <h4 className="sortBy-label mr-2">Sort by</h4>
+          {this.state.categorySelected ? (
+          <h4 className="sortBy-label mr-2">Sort by</h4>) : null}
+          {this.state.categorySelected ? (
           <Dropdown
             placeholder="Sort"
             selection
             options={sortOptions}
             onChange={this.handleSortChange}
             className="mr-5"
-          />
+          />) : null}
 
           <Form inline className="searchForm ml-4">
             <FormControl
@@ -388,7 +422,7 @@ export default class Gallery extends Component {
                 key='saleBtn'
                 disabled={!this.state.isForSale}
               >
-                Request Sale
+                Request Purchase
               </Button>,
             ]}
             width={'65vw'}
@@ -493,12 +527,13 @@ export default class Gallery extends Component {
                       Rental
                     </Tag>) : null }
                   </div>
+                  {this.getCcLicenseImg(artwork.ccLicense)}
                 </Card.Text>
                 <Button
                   variant="primary"
                   onClick={() => this.showOverlay(artwork)}
                 >
-                  Details
+                  {this.getPrice(artwork)}
                 </Button>
                 {artwork.accessList.includes(window.localStorage.getItem('loggedInEmail')) && artwork.isForDownload ? (
                 <Button
