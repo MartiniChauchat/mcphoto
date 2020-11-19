@@ -151,6 +151,7 @@ export default class PrivatePhotosViewer extends Component {
       isForSale: eval(this.formRef.current.getFieldValue('forSale')),
       isForRental: eval(this.formRef.current.getFieldValue('forRental')),
       isSoldorRented: false,
+      ccLicense: this.formRef.current.getFieldValue('cclicense')
     };
 
     this.formRef.current.submit(
@@ -330,6 +331,24 @@ export default class PrivatePhotosViewer extends Component {
                   <Radio value='true'>Yes</Radio>
                   <Radio value='false'>No</Radio>
                 </Radio.Group>
+              </Form.Item>
+
+              <Divider>Confirm your CClicense</Divider>
+              <Form.Item
+                name="cclicense"
+                label="CClicense"
+                hasFeedback
+              >
+                <Select placeholder="Please select your cclicense">
+                  <Option value="N/A">N/A</Option>
+                  <Option value="CC-BY-NC-ND">CC-BY-NC-ND</Option>
+                  <Option value="CC-BY-NC-SA">CC-BY-NC-SA</Option>
+                  <Option value="CC-BY-NC">CC-BY-NC</Option>
+                  <Option value="CC-BY-ND">CC-BY-ND</Option>
+                  <Option value="CC-BY-SA">CC-BY-SA</Option>
+                  <Option value="CC-BY">CC-BY</Option>
+                  <Option value="CC0">CC0</Option>
+                </Select>
               </Form.Item>
             </Form>
           </Modal>
