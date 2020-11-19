@@ -1,17 +1,15 @@
 import React, { Component } from "react";
-import { Col, Row,Typography,Upload, Button, message  } from 'antd';
+import { Tag, notification, Col, Row,Typography,Upload, Button, message,Popconfirm  } from 'antd';
 import moment from 'moment';
 import axios from 'axios';
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const { Title,Paragraph  } = Typography;
 
 export default class PrivatePhotosViewCard extends Component {
-
   state = {
     currentArtwork:[]
   };
-
   componentDidMount() {
     axios({
       method: 'get',
@@ -32,6 +30,30 @@ export default class PrivatePhotosViewCard extends Component {
     return uploadInfo;
   }
 
+  deleteArt= () =>{
+    axios({
+      method: 'delete',
+      url: 'http://localhost:3001/api/v1/arts/deleteArtworkFilesByTitleArtist',
+      params: {title: this.state.currentArtwork.title,
+        artist: this.state.currentArtwork.artist}
+    }).then(res => {
+      console.log(res);
+      axios({
+        method: 'delete',
+        url: 'http://localhost:3001/api/v1/arts/deleteArtworkByTitleArtist',
+        params: {title: this.state.currentArtwork.title,
+          artist: this.state.currentArtwork.artist}
+      }).then(res => {
+        console.log(res);
+          notification.info({
+            message: `Successfully deleted`,
+            placement: `bottomRight`,
+          });
+      }
+        ).catch((err) => console.log(err));
+    }).catch((err) => console.log(err));
+  }
+
   handler = (info) => {
     const status = info.file.status;
     if(status === 'done'){
@@ -49,6 +71,7 @@ export default class PrivatePhotosViewCard extends Component {
   render() {
     return (
       <Col span={8}>
+        <Row justify="space-around"><Tag color="blue">{this.state.currentArtwork.ccLicense}</Tag></Row>
         <Row justify="space-around"><Title level={2}>{this.state.currentArtwork.title}</Title></Row>
         <Row justify="space-around"><Title level={4}>by {this.state.currentArtwork.artist}</Title></Row>
         <Row justify="space-around"><Title level={4}>{this.state.currentArtwork.medium} created on {moment(this.state.currentArtwork.creationTime).format('YYYY.MM.DD')}</Title></Row>
@@ -63,7 +86,16 @@ export default class PrivatePhotosViewCard extends Component {
                   action={'http://localhost:3001/api/v1/arts/uploadFileByTitleArtist'}
                   data={() => this.handleUploadData()}
                   onChange={this.handler}
-          > <Button icon={<UploadOutlined />}>Upload .jpeg only</Button></Upload></Row>
+          > <Button icon={<UploadOutlined />}>Update file</Button></Upload>
+
+          <Popconfirm
+            title="Are you sure to delete this artwork?"
+            onConfirm={this.deleteArt}
+            okText="Yes"
+            cancelText="No"
+          >
+          <Button icon={<DeleteOutlined />}  danger>Delete this</Button></Popconfirm>
+        </Row>
       </Col>
       )
   }
