@@ -6,7 +6,7 @@ import { Upload, DatePicker, InputNumber,Collapse, Image, Spin, Row, Col, Divide
 import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 const { Panel } = Collapse;
-const { Title } = Typography;
+const { Title, Text } = Typography;
 const { Content , Header} = Layout
 const { Option } = Select;
 
@@ -44,7 +44,8 @@ export default class PrivatePhotosViewer extends Component {
       confirmLoading: false,
       user:[],
       uploadVisible: false,
-      uploadedFile:[]
+      uploadedFile:[],
+      ccLicense:[]
     };
 
   componentDidMount() {
@@ -107,6 +108,33 @@ export default class PrivatePhotosViewer extends Component {
     }
     return uploadInfo;
   }
+
+  getccText = (values) => {
+    this.setState({ccLicense: values})
+  }
+
+  printCCLicenseText = () => {
+    const cclicense = this.state.ccLicense
+    if(cclicense == 'CC0') {
+      return 'CC0 (aka CC Zero) is a public dedication tool, which allows creators to give up their copyright and put their works into the worldwide public domain. CC0 allows reusers to distribute, remix, adapt, and build upon the material in any medium or format, with no conditions.'
+    } else if(cclicense == 'CC-BY-NC-ND') {
+      return 'This license allows reusers to copy and distribute the material in any medium or format in unadapted form only, for noncommercial purposes only, and only so long as attribution is given to the creator. '
+    } else if(cclicense == 'CC-BY-ND'){
+      return 'This license allows reusers to copy and distribute the material in any medium or format in unadapted form only, and only so long as attribution is given to the creator. The license allows for commercial use. '
+    } else if(cclicense == 'CC-BY-NC-SA'){
+      return 'This license allows reusers to distribute, remix, adapt, and build upon the material in any medium or format for noncommercial purposes only, and only so long as attribution is given to the creator. If you remix, adapt, or build upon the material, you must license the modified material under identical terms. '
+    } else if(cclicense == 'CC-BY-NC'){
+      return 'This license allows reusers to distribute, remix, adapt, and build upon the material in any medium or format for noncommercial purposes only, and only so long as attribution is given to the creator. '
+    } else if(cclicense == 'CC-BY-SA'){
+      return 'This license allows reusers to distribute, remix, adapt, and build upon the material in any medium or format, so long as attribution is given to the creator. The license allows for commercial use. If you remix, adapt, or build upon the material, you must license the modified material under identical terms.'
+    } else if(cclicense == 'CC-BY'){
+      return 'This license allows reusers to distribute, remix, adapt, and build upon the material in any medium or format, so long as attribution is given to the creator. The license allows for commercial use.'
+    } else if(cclicense == 'N/A'){
+      return '...'
+    }
+    return cclicense
+  }
+
 
   handler = (info) => {
     const status = info.file.status;
@@ -339,7 +367,7 @@ export default class PrivatePhotosViewer extends Component {
                 label="CClicense"
                 hasFeedback
               >
-                <Select placeholder="Please select your cclicense">
+                <Select onChange={this.getccText} placeholder="Please select your cclicense">
                   <Option value="N/A">N/A</Option>
                   <Option value="CC-BY-NC-ND">CC-BY-NC-ND</Option>
                   <Option value="CC-BY-NC-SA">CC-BY-NC-SA</Option>
@@ -349,7 +377,9 @@ export default class PrivatePhotosViewer extends Component {
                   <Option value="CC-BY">CC-BY</Option>
                   <Option value="CC0">CC0</Option>
                 </Select>
+                <Typography.Text className="ant-form-text" type="secondary">{this.printCCLicenseText()}</Typography.Text>
               </Form.Item>
+
             </Form>
           </Modal>
 
