@@ -6,7 +6,7 @@ import { Upload, DatePicker, InputNumber,Collapse, Image, Spin, Row, Col, Divide
 import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 const { Panel } = Collapse;
-const { Title, Text } = Typography;
+const { Title, Text, Link } = Typography;
 const { Content , Header} = Layout
 const { Option } = Select;
 
@@ -130,7 +130,7 @@ export default class PrivatePhotosViewer extends Component {
     } else if(cclicense == 'CC-BY'){
       return 'This license allows reusers to distribute, remix, adapt, and build upon the material in any medium or format, so long as attribution is given to the creator. The license allows for commercial use.'
     } else if(cclicense == 'N/A'){
-      return '...'
+      return ''
     }
     return cclicense
   }
@@ -377,7 +377,10 @@ export default class PrivatePhotosViewer extends Component {
                   <Option value="CC-BY">CC-BY</Option>
                   <Option value="CC0">CC0</Option>
                 </Select>
-                <Typography.Text className="ant-form-text" type="secondary">{this.printCCLicenseText()}</Typography.Text>
+                <Text className="ant-form-text" type="secondary">{this.printCCLicenseText()}</Text>
+                <Link href="https://creativecommons.org/about/cclicenses/" target="_blank">
+                  Click for more information about Creative Commons license
+                </Link>
               </Form.Item>
 
             </Form>

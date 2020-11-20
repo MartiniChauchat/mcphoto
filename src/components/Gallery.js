@@ -10,7 +10,7 @@ import Pagination from './Pagination';
 import axios from 'axios';
 import '../css/Gallery.css';
 import 'antd/dist/antd.css';
-import { Tag, Descriptions, Modal } from 'antd';
+import { Tag, Descriptions, Modal, Tooltip, Typography } from 'antd';
 import {
   FolderOpenOutlined,
   ShoppingCartOutlined,
@@ -24,6 +24,7 @@ import by_sa from '../images/ccLicenses/by-sa.png';
 import by from '../images/ccLicenses/by.png';
 import cc_zero from '../images/ccLicenses/cc-zero.png';
 
+const { Link, Text } = Typography;
 const PAGE_LIMIT = 6;
 const PAGE_NEIGHBORS = 1;
 const NONE = 'None';
@@ -316,6 +317,27 @@ export default class Gallery extends Component {
     }
   }
 
+  printCCLicenseText = (cclicense) => {
+    if(cclicense == 'CC0') {
+      return 'CC0 (aka CC Zero) is a public dedication tool, which allows creators to give up their copyright and put their works into the worldwide public domain. CC0 allows reusers to distribute, remix, adapt, and build upon the material in any medium or format, with no conditions.'
+    } else if(cclicense == 'CC-BY-NC-ND') {
+      return 'This license allows reusers to copy and distribute the material in any medium or format in unadapted form only, for noncommercial purposes only, and only so long as attribution is given to the creator. '
+    } else if(cclicense == 'CC-BY-ND'){
+      return 'This license allows reusers to copy and distribute the material in any medium or format in unadapted form only, and only so long as attribution is given to the creator. The license allows for commercial use. '
+    } else if(cclicense == 'CC-BY-NC-SA'){
+      return 'This license allows reusers to distribute, remix, adapt, and build upon the material in any medium or format for noncommercial purposes only, and only so long as attribution is given to the creator. If you remix, adapt, or build upon the material, you must license the modified material under identical terms. '
+    } else if(cclicense == 'CC-BY-NC'){
+      return 'This license allows reusers to distribute, remix, adapt, and build upon the material in any medium or format for noncommercial purposes only, and only so long as attribution is given to the creator. '
+    } else if(cclicense == 'CC-BY-SA'){
+      return 'This license allows reusers to distribute, remix, adapt, and build upon the material in any medium or format, so long as attribution is given to the creator. The license allows for commercial use. If you remix, adapt, or build upon the material, you must license the modified material under identical terms.'
+    } else if(cclicense == 'CC-BY'){
+      return 'This license allows reusers to distribute, remix, adapt, and build upon the material in any medium or format, so long as attribution is given to the creator. The license allows for commercial use.'
+    } else if(cclicense == 'N/A'){
+      return ''
+    }
+    return cclicense
+  }
+
   getCcLicenseImg = license => {
     let src = null;
     if (license === 'N/A') {
@@ -337,11 +359,11 @@ export default class Gallery extends Component {
     } else {
       src = cc_zero;
     }
-    return (<Image 
+    return (<Tooltip placement='right' title={this.printCCLicenseText(license)}><Image 
       src={src}
       alt={license}
       style={{ height: '30px', width: '80px', marginTop: '5px' }}
-    />);
+    /></Tooltip>);
   }
 
   render() {
@@ -482,6 +504,12 @@ export default class Gallery extends Component {
             onPageChanged={this.onPageChanged}
           />
         </div>
+        {this.state.categorySelected === 'PhotoRepo' ? (<div>
+          <Text className="ant-form-text" type="secondary">Below is the Photo Repository where all photos are under Creative Commons Lisense. They are free of charge.</Text>
+          <Link href="https://creativecommons.org/about/cclicenses/" target="_blank">
+            Click for more information about Creative Commons license
+          </Link>
+        </div>) : null}
         <div>
           {currentArtworks.map((artwork, index) => (
             <Card style={{ width: '25vw' }} key={index} className="artwork m-4">
@@ -535,7 +563,7 @@ export default class Gallery extends Component {
                 >
                   {this.getPrice(artwork)}
                 </Button>
-                {artwork.accessList.includes(window.localStorage.getItem('loggedInEmail')) && artwork.isForDownload ? (
+                {(artwork.accessList.includes(window.localStorage.getItem('loggedInEmail')) || artwork.download_price === 0) && artwork.isForDownload ? (
                 <Button
                   variant="danger"
                   href={`http://localhost:3001/api/v1/arts/getFilepathByTitleArtist?artist=${artwork.artist}&title=${artwork.title}&imageSize=`}
