@@ -49,6 +49,7 @@ export default class PrivatePhotosViewCard extends Component {
             message: `Successfully deleted`,
             placement: `bottomRight`,
           });
+          this.setState({currentArtwork:[]});
       }
         ).catch((err) => console.log(err));
     }).catch((err) => console.log(err));

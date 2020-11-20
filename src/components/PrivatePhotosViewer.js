@@ -198,6 +198,14 @@ export default class PrivatePhotosViewer extends Component {
           'You can upload the file right now.',
         placement: 'bottomRight'
       });
+
+      axios({
+        method: 'get',
+        url: 'http://localhost:3001/api/v1/arts/getArtworkListByArtistEmail',
+        params: { artistEmail: window.localStorage.getItem("loggedInEmail") }
+      }).then(res => {
+        this.setState( {artworks:res.data} )
+      }).catch((err) => console.log(err));
       this.setState({
         modalVisible: false,
         uploadVisible: true,
