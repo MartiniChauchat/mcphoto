@@ -289,6 +289,7 @@ export default class Gallery extends Component {
       type: transType,
       artwork: artwork._id,
       artworkTitle: artwork.title,
+      artist: artwork.artist,
     };
     await axios({
       method: 'post',
@@ -462,7 +463,7 @@ export default class Gallery extends Component {
               <Descriptions.Item label="Download Price">
                 {artwork.isForDownload ? `$${artwork.download_price}` : 'N/A'}
               </Descriptions.Item>
-              <Descriptions.Item label="Rental Price">
+              <Descriptions.Item label="Rental Price (Monthly)">
                 {artwork.isForRental ? `$${artwork.rental_price}` : 'N/A'}
               </Descriptions.Item>
               <Descriptions.Item label="Sale Price">

@@ -280,7 +280,7 @@ export default class PrivatePhotosViewer extends Component {
               </Form.Item>
               <Form.Item
                 name="rentalprice"
-                label="Rental price"
+                label="Rental price (Monthly)"
                 rules={[
                   {
                     pattern: /^[0-9]+$/
