@@ -10,16 +10,16 @@ export default class Transaction extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     //this.findArtWorkTitle = this.findArtWorkTitle.bind(this);
     // this.isPending = this.isPending.bind(this);
+    this.handleClick = this.handleClick.bind(this);
 
     this.state = {
       trans_receive: [],
       trans_send: [],
-      isPending: true,
+      button_click: false,
     };
   }
 
   componentDidMount() {
-
     axios({
       method: 'get',
       url: 'http://localhost:3001/api/v1/transactions/getTransactionSent',
@@ -46,31 +46,48 @@ export default class Transaction extends Component {
     e.preventDefault();
   }
 
-  // findArtWorkTitle(id) {
-  //   axios({
-  //     method: 'get',
-  //     url: 'http://localhost:3001/api/v1/artwork',
-  //     params: { _id: id }
-  //     // headers: { 
-  //     //   'Content-Type': 'application/json',
-  //     //   'authorization': 'Bearer ' + window.localStorage.getItem('token'),
-  //     // }
-  //   }).then(res => {
-  //     console.log(res.data.a);
-  //     const art_item = res.data.a;
-  //     this.setState({ art: this.state.art.concat(art_item) });
-  //   }).catch((err) => console.log(err));
-  // }
+  handleClick(id, status) {
+    axios({
+      method: 'patch',
+      url: 'http://localhost:3001/api/v1/transactions/updateTransaction',
+      data: {
+        transactionId: id,
+        status: status
+      }
+    });
 
-  //   isPending(s) {
-  //     s == "pending" ? 
-  //     <td><Button variant="primary">Cancel</Button>{' '}</td> 
-  //     :
-  //     <td><Button variant="primary">Cancel</Button>{' '}</td>
-  // }
+    this.setState(state => ({
+      button_click: !state.button_click
+    }));
+    
+    axios({
+      method: 'get',
+      url: 'http://localhost:3001/api/v1/transactions/getTransactionSent',
+      params: { email: new URLSearchParams(this.props.location.search).get("email") }
+    }).then(res => {
+      console.log(res.data.trans);
+      const trans_send = res.data.trans;
+      this.setState({ trans_send: trans_send });
+    }).catch((err) => console.log(err));
+
+    axios({
+      method: 'get',
+      url: 'http://localhost:3001/api/v1/transactions/getTransactionReceived',
+      params: { email: new URLSearchParams(this.props.location.search).get("email") }
+    }).then(res => {
+      console.log(res.data.trans);
+      const trans_receive = res.data.trans;
+      this.setState({ trans_receive: trans_receive });
+    }).catch((err) => console.log(err));
+    //console.log(this.state.button_click);
+
+    //window.location.reload(false);
+  
+  }
 
 
   render() {
+    console.log("render() method");
     return (
       <div>
         <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
@@ -97,7 +114,7 @@ export default class Transaction extends Component {
                       <tbody >
                         {this.state.trans_send.map((trans) =>
                           <tr>
-                            {/* <td><a href="#">{trans._id}</a></td> */}
+                            {/* <td>{trans._id}</td> */}
                             <td>{trans.receiver_email}</td>
                             <td>{trans.type}</td>
                             <td>{trans.artworkTitle}</td>
@@ -106,9 +123,11 @@ export default class Transaction extends Component {
                             <td>
                             {(() => {
                                 switch (trans.status) {
-                                  case "pending": return <Button variant="primary" size="sm">Cancel</Button>;
-                                  case "finished": return <Button variant="success" size="sm">Download*</Button>;
-                                  case "canceled": return <Button variant="secondary" size="sm" disabled>Cancel</Button>;
+                                  case "pending": return <Button variant="primary" size="sm" onClick={() => this.handleClick(trans._id, 'canceled')}>Cancel</Button>;
+                                  //case "pending": return <button variant="primary" size="sm" onClick={this.handleClick(trans._id, 'canceled')}>Cancel</button>
+                                  case "finished": return <Button variant="success" size="sm" variant="danger"
+                                  href={`http://localhost:3001/api/v1/arts/getFilepathByTitleArtist?artist=${trans.artist}&title=${trans.title}&imageSize=`}>Download*</Button>;
+                                  case "canceled": return <Button variant="secondary" size="sm" disabled>Canceled</Button>;
                                   default: return <Button variant="primary" size="sm">Cancel</Button>;
                                 }
                               })()}
@@ -156,7 +175,7 @@ export default class Transaction extends Component {
                             <td>
                               {(() => {
                                 switch (trans.status) {
-                                  case "pending": return <Button variant="primary" size="sm">Accept</Button>;
+                                  case "pending": return <Button variant="primary" size="sm" onClick={() => this.handleClick(trans._id, 'finished')}>Accept</Button>;
                                   case "finished": return <Button variant="success" size="sm">Accepted</Button>;
                                   case "canceled": return <Button variant="secondary" size="sm" disabled>Accept</Button>;
                                   default: return <Button variant="primary" size="sm">Accept</Button>;
@@ -166,7 +185,7 @@ export default class Transaction extends Component {
                             <td>
                               {(() => {
                                 switch (trans.status) {
-                                  case "pending": return <Button variant="primary" size="sm">Reject</Button>;
+                                  case "pending": return <Button variant="primary" size="sm" onClick={() => this.handleClick(trans._id, 'canceled')}>Reject</Button>;
                                   case "finished": return <Button variant="primary" size="sm" disabled>Reject</Button>;
                                   case "canceled": return <Button variant="secondary" size="sm" disabled>Reject</Button>;
                                   default: return <Button variant="primary" size="sm">Reject</Button>;
