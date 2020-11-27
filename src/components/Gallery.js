@@ -238,10 +238,15 @@ export default class Gallery extends Component {
   };
 
   handleSortChange = (e, { value }) => {
-    let newParams = new URLSearchParams(this.state.apiParams);
+    const { apiParams, categorySelected } = this.state;
+    let newParams = new URLSearchParams(apiParams);
     newParams.delete('sort');
     if (value !== NONE) {
-      newParams.append('sort', value);
+      let sortOn = value;
+      if (value === 'price') {
+        sortOn = categorySelected === 'isForRental' ? 'rental_price' : categorySelected === 'isForSale' ? 'sale_price' : 'download_price';
+      }
+      newParams.append('sort', sortOn);
     }
     this.setState({ apiParams: newParams, currentPage: 1 });
   };
@@ -506,8 +511,8 @@ export default class Gallery extends Component {
           />
         </div>
         {this.state.categorySelected === 'PhotoRepo' ? (<div>
-          <Text className="ant-form-text" type="secondary">Below is the Photo Repository where all photos are under Creative Commons Lisense. They are free of charge.</Text>
-          <Link href="https://creativecommons.org/about/cclicenses/" target="_blank">
+          <Text className="notes ant-form-text" type="secondary">Below is the Photo Repository where all photos are under Creative Commons Lisense. They are free of charge.</Text>
+          <Link href="https://creativecommons.org/about/cclicenses/" target="_blank" className='notes'>
             Click for more information about Creative Commons license
           </Link>
         </div>) : null}
