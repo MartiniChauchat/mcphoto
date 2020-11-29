@@ -179,8 +179,8 @@ export default class Transaction extends Component {
                                 switch (trans.status) {
                                   case "pending": return <Button variant="primary" size="sm" onClick={() => this.handleClick(trans._id, 'canceled')}>Cancel</Button>;
                                   //case "pending": return <button variant="primary" size="sm" onClick={this.handleClick(trans._id, 'canceled')}>Cancel</button>
-                                  case "finished": return <Button variant="success" size="sm" href={`http://localhost:3001/api/v1/arts/getFilepathByTitleArtist?artist=${trans.artist}&title=${trans.artworkTitle}&imageSize=`}
-                                  >Download*</Button>;
+                                  case "finished": return trans.type === 'Download' ? <Button variant="success" size="sm" href={`http://localhost:3001/api/v1/arts/getFilepathByTitleArtist?artist=${trans.artist}&title=${trans.artworkTitle}&imageSize=`}
+                                  >Download*</Button> : <Button variant="success" size="sm">Accepted</Button>;
                                   case "canceled": return <Button variant="secondary" size="sm" disabled>Canceled</Button>;
                                   default: return <Button variant="primary" size="sm">Cancel</Button>;
                                 }
@@ -231,8 +231,7 @@ export default class Transaction extends Component {
                                 switch (trans.status) {
                                   case "pending": return <Button variant="primary" size="sm" onClick={() => this.handleClick(trans._id, 'finished')}>Accept</Button>;
                                   case "finished": return <Button variant="success" size="sm">Accepted</Button>;
-                                  case "canceled": return <Button variant="secondary" size="sm" disabled>Accept</Button>;
-                                  default: return <Button variant="primary" size="sm">Accept</Button>;
+                                  default: return null;
                                 }
                               })()}
                             </td>
@@ -240,9 +239,8 @@ export default class Transaction extends Component {
                               {(() => {
                                 switch (trans.status) {
                                   case "pending": return <Button variant="primary" size="sm" onClick={() => this.handleClick(trans._id, 'canceled')}>Reject</Button>;
-                                  case "finished": return <Button variant="primary" size="sm" disabled>Reject</Button>;
-                                  case "canceled": return <Button variant="secondary" size="sm" disabled>Reject</Button>;
-                                  default: return <Button variant="primary" size="sm">Reject</Button>;
+                                  case "canceled": return <Button variant="secondary" size="sm" disabled>Canceled</Button>;
+                                  default: return null;
                                 }
                               })()}
                             </td>
